@@ -7,7 +7,6 @@ tags: [java, codeing]
 ---
 
 Java中的Scanner类除了可以用来读取扫描从键盘输入,还可以扫描文件
-
 Scanner类很基本,通过读取用户从键盘输入字符来实现交互.主要是通过Scanner类中的nextLine()方法来获取输入的所有内容,也可以使用next()方法,
 但next()方法不会获取空格,但一般使用nextLine()方法
 

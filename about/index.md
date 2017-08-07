@@ -1,5 +1,6 @@
 ---
 title: 关于
+type: "about"
 date: 2017-04-30 11:44:49
 comments: false
 ---

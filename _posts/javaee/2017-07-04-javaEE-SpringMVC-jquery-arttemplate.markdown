@@ -25,25 +25,13 @@ tags: [javaEE, codeing，JQuery, AJAX]
 #### 关于success函数
 
 jquery ajax的异步请求方法中，定义了一个success函数机制，如下面的实现代码
-
 `success:function(result){}`
-
 这样的
-
-我也不知道这个success功能该怎么叫，它的工作原理我也不大清楚，说是success函数机制，这也只是我按自己的理解命名的
-控制器方法在执行完数据的处理后，return操作后的结果，这就当是服务器的返回，原先缓存在浏览器中的favorite_list.js中的jquery ajax还在运行等待服务器的返回，
-当其检测到服务器发送回来的数据后，将数据当做参数传到success函数机制中
-
+我也不知道这个success功能该怎么叫，它的工作原理我也不大清楚，说是success函数机制，这也只是我按自己的理解命名的,控制器方法在执行完数据的处理后，return操作后的结果，这就当是服务器的返回，原先缓存在浏览器中的favorite_list.js中的jquery ajax还在运行等待服务器的返回，当其检测到服务器发送回来的数据后，将数据当做参数传到success函数机制中
 就如下面代码
-
 `success:function(返回数据){}`
-
-后面success函数机制在根据返回的数据进行操作判断之前请求的数据是否处理成功
-并做出对应的相应
-
-这是我现在的猜测，
-另外
-根据根据控制器方法的不同返回结果，可分为不同的跳转方式
+后面success函数机制在根据返回的数据进行操作判断之前请求的数据是否处理成功,并做出对应的相应,这是我现在的猜测
+另外,根据根据控制器方法的不同返回结果，可分为不同的跳转方式
 
 #### 同步跳转
 
@@ -52,10 +40,7 @@ jquery ajax的异步请求方法中，定义了一个success函数机制，如�
 
 #### 异步跳转
 
-控制器方法内部只有数据的处理，最后也只返回数据，这样的数据异步跳转
-
-还有就是，每个ajax的请求都对应一个控制器，每次请求都会对应实例化一个新的Request对象，后面事件触发的ajax数据请求与初次访问页面请求的Request对象是不同的
-
+控制器方法内部只有数据的处理，最后也只返回数据，这样的数据异步跳转,还有就是，每个ajax的请求都对应一个控制器，每次请求都会对应实例化一个新的Request对象，后面事件触发的ajax数据请求与初次访问页面请求的Request对象是不同的
 下面贴出相关文件的代码
 
 #### list.jsp
@@ -175,8 +160,7 @@ list.jsp页面的代码
     </script>
 
 
-这个页面中对应的控制器方法使用了同步加载的方法，其返回值是一个list.jsp页面路径
-在这个页面中，关键数据使用了arttemplate模板，如<script id="tpl-list-item" type="text/html"></script>标签块中的代码实现，配合ajax实现list.jsp页面数据的异步加载并渲染
+这个页面中对应的控制器方法使用了同步加载的方法，其返回值是一个list.jsp页面路径,在这个页面中，关键数据使用了arttemplate模板，如<script id="tpl-list-item" type="text/html"></script>标签块中的代码实现，配合ajax实现list.jsp页面数据的异步加载并渲染
 
 #### FavoriteController.java
 
@@ -227,15 +211,14 @@ list.jsp页面的代码
 
     }
 
-观察上面的代码可以知道这是个基于注解实现的控制器，
-使用@Controller来声明一个控制器类，
+观察上面的代码可以知道这是个基于注解实现的控制器，使用@Controller来声明一个控制器类，
 @RequestMapping来声明一个控制器方法，RequestMapping方法除了有value属性外，还有method属性
 
 #### favorite_list.js
 
 favorite_list.js中的部分代码
 
-    $(function() {
+    $(function(){
         if (!$.checkLogin()) { //验证登录
             return;
         }
@@ -312,9 +295,7 @@ favorite_list.js中的部分代码
     }
 
 结合上面的favorite_list.js中的代码，来进一步了解异步加载数据的实现
-
 list.jsp页面中引用了favorite_list.js这个文件，在第一次访问list.jsp页面并完成文档加载后会自动调用favorite_list.js中的文档就绪函数$(function(){}),以此来初始化Collect对象，并且调用favorite_list.js中的getFavoriteList()方法，实话说，这个方法就是主要用来实现异步加载list.jsp页面所需要的数据的主要实现部分
-
 getFavoriteList()方法中定义了jquery ajax的异步数据请求，设置了url,使得具体的数据获取操作交给控制器类FavoriteController中相对应的控制器方法,且使用了success函数机制等待控制器方法返回的结果
 并在方法内将结果处理遍历出来，遍历的方法里面使用了arttemplate中的template()方法，将数据对象都渲染到jsp页面
 遍历出来的数据div块都在类名为collect-list-box的div块里，所以猜测arttemplate模板只能放到页面最后

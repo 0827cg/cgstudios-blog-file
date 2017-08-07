@@ -7,7 +7,6 @@ tags: [java, codeing]
 ---
 
 用来遍历文件夹内容的后树形显示内容的一段小代码
-
 如下代码:
 
 <!-- more -->
@@ -36,7 +35,6 @@ tags: [java, codeing]
 	}
 
 这段代码将保存在上面的路径/home/cg/Work/Testnew/Java文件夹下,名字为ShowFile.java
-
 之后在终端中编译运行,如下图:
 
 ![java-bookContorlSystem](/images/java/java-ShowFile.png)

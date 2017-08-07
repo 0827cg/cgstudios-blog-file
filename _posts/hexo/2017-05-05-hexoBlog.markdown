@@ -19,29 +19,11 @@ tags: hexo
 
 #### 什么是Hexo
 
-在使用hexo之前,
-
-首先我们先要了解什么是hexo,hexo是静态博客生成工具,单纯的生成静态html页面,将页面组合起来,就成了博客.当然,你也可以自己写html页面,写多个html页面,在将html页面手动联系起来,放在同一个站点下,也可以是一个博客
-,不过,使用hexo来创建博客将会更简单,更快捷方便
-
-所以,hexo就是一个使搭建博客操作变得简单的工具,跟jekyll一个作用,详情,可以参考[Hexo官方文档][]
-
+在使用hexo之前,首先我们先要了解什么是hexo,hexo是静态博客生成工具,单纯的生成静态html页面,将页面组合起来,就成了博客.当然,你也可以自己写html页面,写多个html页面,在将html页面手动联系起来,放在同一个站点下,也可以是一个博客,不过,使用hexo来创建博客将会更简单,更快捷方便。所以,hexo就是一个使搭建博客操作变得简单的工具,跟jekyll一个作用,详情,可以参考[Hexo官方文档][]
 ok,在我们已经知道hexo是什么之后,我们还需要稍微了解一下hexo她大概是怎么运作的
-
-首先知道Hexo这个工具是由JavaScript编写的,那么我们在本地运行Hexo就需要JavaScript环境,即node.js
-
-所以,我们需要安装node.js,至于node.js是什么.这里就不做介绍.
-
-不过需要知道node.js中包括了npm,npm是node.js的一个模块管理工具,目前使用她所起到的作用就像是一个下载器
-
-跟命令apt-get命令差不多
-
-其实说到JavaScript,个人认为,JavaScript到以后将会发展成主流编程语言,取代java
-
+首先知道Hexo这个工具是由JavaScript编写的,那么我们在本地运行Hexo就需要JavaScript环境,即node.js。所以,我们需要安装node.js,至于node.js是什么.这里就不做介绍.不过需要知道node.js中包括了npm,npm是node.js的一个模块管理工具,目前使用她所起到的作用就像是一个下载器。跟命令apt-get命令差不多，其实说到JavaScript,个人认为,JavaScript到以后将会发展成主流编程语言,取代java
 扯远了,,,,,,,,
-
 再来了解hexo的运作方式,先看hexo默认生成的目录结构
-
 如图:
 
 ![hexo-blog-defaultFile](/images/hexo/hexo-blog-DefaultFile.png)
@@ -56,30 +38,15 @@ ok,在我们已经知道hexo是什么之后,我们还需要稍微了解一下hex
 * db.json-数据缓存文件
 * package.json-应用程序的信息
 
-hexo有个专门存放主题的文件夹themes,存放这一个自带的主题landscape,更改主题则需要自己下载主题存放到该目录下,并在站点的配置文件_config.yml中进行配置
-
-hexo生成静态html页面的原则就是依据模板文件和主题文件来自动生成html页面
-
-所以,说到这,仔细想想,也可以说hexo是一个框架,工具和框架貌似都差不多
-
-跟jekyll不同的是,hexo运行时不会生成html页面,需要输入执行命令后,才会生存html页面
-
-生成的html页面将会在此时的hexo博客跟目录下新建一个public文件夹,所有的html页面和所需的资源都将存放到这个文件夹中,
-
-再说明一下,提交到github上面的文件也都只有public文件夹里的文件,其余的文件并不会提交到仓库中
+hexo有个专门存放主题的文件夹themes,存放这一个自带的主题landscape,更改主题则需要自己下载主题存放到该目录下,并在站点的配置文件_config.yml中进行配置,hexo生成静态html页面的原则就是依据模板文件和主题文件来自动生成html页面
+所以,说到这,仔细想想,也可以说hexo是一个框架,工具和框架貌似都差不多.跟jekyll不同的是,hexo运行时不会生成html页面,需要输入执行命令后,才会生存html页面
+生成的html页面将会在此时的hexo博客跟目录下新建一个public文件夹,所有的html页面和所需的资源都将存放到这个文件夹中.再说明一下,提交到github上面的文件也都只有public文件夹里的文件,其余的文件并不会提交到仓库中
 
 #### 搭建hexo环境
 
-前面说到,hexo是使用JavaScript语言编写的,那么就需要先搭建好JavaScript环境,即安装node.js
-
-这里个人建议到[node.js官网][]下载安装,并配置好环境变量
-
-我这是linux内核系统
-
+前面说到,hexo是使用JavaScript语言编写的,那么就需要先搭建好JavaScript环境,即安装node.js，这里个人建议到[node.js官网][]下载安装,并配置好环境变量,我这是linux内核系统
 在linux下配置环境变量,运行命令
-
 `sudo gedit /etc/profile`
-
 在其中添加
 
 	#set for nodejs-environment
@@ -88,27 +55,13 @@ hexo生成静态html页面的原则就是依据模板文件和主题文件来自
 	export PATH=$NODE_HOME/bin:$PATH
 
 完后运行
-
 `source /etc/profile`
-
-来使配置立即生效
-
-之后可以输入
-
+来使配置立即生效.之后可以输入
 `node -v`
-
-来查看node.js是否安装成功,输出版本号则表示安装成功
-
-完成node.js的安装,就可以使用npm命令来安装hexo了
-
+来查看node.js是否安装成功,输出版本号则表示安装成功.完成node.js的安装,就可以使用npm命令来安装hexo了
 运行命令
-
 `npm install -g hexo-cli`
-
-完后测试安装是否成功,如果不成功,看输出是什么样的
-
-我是配置了hexo的环境变量
-
+完后测试安装是否成功,如果不成功,看输出是什么样的,我是配置了hexo的环境变量
 这里贴下我之前的命令行记录:
 
 	cg@cg-ThinkPad-Edge-E540 ~ $ node -v
@@ -982,44 +935,22 @@ hexo生成静态html页面的原则就是依据模板文件和主题文件来自
 	INFO  Start blogging with Hexo!
 	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork/blog $ 
 
-这样,就完成了hexo本地环境的搭建,也在创建了本地博客
-
-之后就可以在source目录下写文章了
-
+这样,就完成了hexo本地环境的搭建,也在创建了本地博客，之后就可以在source目录下写文章了
 #### 发布博客
-
 文章写完后,在本地博客跟目录下运行命令
-
 `hexo serve`
-
 后,就可以在浏览器中访问本地博客,地址为
-
 `http://localhost:4000/`
-
 之后,运行命令
-
 `hexo generate`
-
 来生成html页面,存放到根目录的public文件夹内
-
 再运行
-
 `hexo deploy`
-
-命令,就可以将博客push到github中,需要注意的是,这里推送到github的只是public文件夹里的文件,其他的文件不会推送到github仓库中,
-
-还有,单纯的使用deploy命令来将内容推送到github仓库中时,自己并不能设置更性日志,她所设置的日志只是一些更性时间
-
-而在之前使用的jekyll创建博客时,是单纯的使用git命令来推送文章,里面每推送一次,都需要设置描述性的日志
-
+命令,就可以将博客push到github中,需要注意的是,这里推送到github的只是public文件夹里的文件,其他的文件不会推送到github仓库中,还有,单纯的使用deploy命令来将内容推送到github仓库中时,自己并不能设置更性日志,她所设置的日志只是一些更性时间。而在之前使用的jekyll创建博客时,是单纯的使用git命令来推送文章,里面每推送一次,都需要设置描述性的日志
 即命令
-
 `git commit -m "xxxxx"`
-
 而这里的
-
 `hexo deploy`
-
 则不是这样,她属于包装了git命令,使得推送更新变得更为简单,这点倒让我觉得不太好
 
 

@@ -10,25 +10,15 @@ tags: [javaEE, codeing]
 
 ### Hibernate框架简述
 
-总得来说,它就是用来操作数据库的.
-在JavaEE开发方面来说,它这个框架所用在层面是数据访问层,在系统上来说算是底层的操作
-
+总得来说,它就是用来操作数据库的.在JavaEE开发方面来说,它这个框架所用在层面是数据访问层,在系统上来说算是底层的操作
 Hibernate框架其主要是封装了JDBC的一系列操作.使用Hibernate框架可以使得系统在于数据库进行数据传递时不需要用到SQL语句,其实现的方法是实体类于数据库表之间的映射关系,也即是ORM(Object Relation Mapping)对象关系映射
-
 通过ORM,使得系统在获取数据时可以直接从实体类中获取,而不需要一味的去操作数据库.ORM映射机制就相当于在实体类和数据库表中搭建了一座桥梁,数据库表中的数据通过桥梁,将数据赋值给实体类中的属性,根据面向对象系统只需要获取此时的实体类的对象就可以获取到其数据,并进行对数据的操作.反过来,数据在被系统操作之后,新的数据就被重新赋值给了实体类的属性,系统再通过Hibernate的ORM机制,将此时实体类的对象里的属性存储到数据库表中,完成数据的存储.
 
 <!-- more -->
 
-当中的读取和存储过程都不需要用到sql语句来对数据库表进行操作,这样使用Hibernate就简化了系统对数据库的访问操作
-
-所以,Hibernate框架就可以简单的理解为是为使系统能简单的只从实体类中就可以获得数据的一种工具
-
-为达到上面的目的,想想Hibernate要怎么做才能实现仅通过ORM而不是用sql语句就可以从数据库中获取数据呢
-
+当中的读取和存储过程都不需要用到sql语句来对数据库表进行操作,这样使用Hibernate就简化了系统对数据库的访问操作.所以,Hibernate框架就可以简单的理解为是为使系统能简单的只从实体类中就可以获得数据的一种工具,为达到上面的目的,想想Hibernate要怎么做才能实现仅通过ORM而不是用sql语句就可以从数据库中获取数据呢
 这就是它的奥妙之处.
-
 Hibernate通过在实体类和数据库表中间建立一种映射机制,实现映射机制就需要用到映射文件,就是实体类和对应的数据库表之间的映射文件
-
 参照例子代码:
 
 * 实体类Student
@@ -88,9 +78,7 @@ Hibernate通过在实体类和数据库表中间建立一种映射机制,实现�
 		}
 	}
 
-实体类中的属性都是private的,属性就是用来临时存放相对应的数据的,这些数据就是从与实体类相对应相映射的数据库表中得来的
-那么就必须会有一张表存放这个实体类对应的数据,就比如这个表中的数据都有6个字段与上面的实体类中的6个属性值相对应
-那么再需要一个映射文件来将表和类连接起来
+实体类中的属性都是private的,属性就是用来临时存放相对应的数据的,这些数据就是从与实体类相对应相映射的数据库表中得来的,那么就必须会有一张表存放这个实体类对应的数据,就比如这个表中的数据都有6个字段与上面的实体类中的6个属性值相对应,那么再需要一个映射文件来将表和类连接起来
 那么对应上面
 
 #### Student.hbm.xml
@@ -134,12 +122,8 @@ Hibernate通过在实体类和数据库表中间建立一种映射机制,实现�
 		</class>
 	</hibernate-mapping>
 
-代码块中已经有了注释,就不再解释代码的意思了,
-总之,需要有专门的映射文件将实体类和数据库表相连接起来
-
-另外,Hibernate会自动在数据库中创建表,只是表,不会创建数据库.其创建表的依据就是根据实体类的属性以及映射文件的相关配置来创建表.例如上面映射文件中的class标签中的table属性值为"dt_t_stuMsg",那么在系统运行后,将会在数据库中创建一个名为dt_t_stuMsg的表,这个表就是跟Student.java这个实体类相互映射的
-
-这里总结一下知识点,顺便用来承上启下:
+代码块中已经有了注释,就不再解释代码的意思了,总之,需要有专门的映射文件将实体类和数据库表相连接起来.另外,Hibernate会自动在数据库中创建表,只是表,不会创建数据库.其创建表的依据就是根据实体类的属性以及映射文件的相关配置来创建表.例如上面映射文件中的class标签中的table属性值为"dt_t_stuMsg",那么在系统运行后,将会在数据库中创建一个名为dt_t_stuMsg的表,这个表就是跟Student.java这个实体类相互映射的
+这里总结一下知识点,顺便用来承上启下
 
 * 实体类和表的映射文件名格式:xxx.hbm.xml(xxx一般为实体类的名字)
 * 映射文件的存放位置一般在实体类所在的包下
@@ -228,10 +212,7 @@ Hibernate通过在实体类和数据库表中间建立一种映射机制,实现�
 
 #### SessionFactory类
 
-这里了解下SessionFactory这个类,它是一个接口
-
-一个SessionFactory实例对应一个数据存储源,应用从SessionFactory中获取Session实例.
-
+这里了解下SessionFactory这个类,它是一个接口,一个SessionFactory实例对应一个数据存储源,应用从SessionFactory中获取Session实例.
 SessionFactory特点:
 
 * 线程是安全的,这意味着它的同一个实例可以被应用的多个线程共享
@@ -239,9 +220,7 @@ SessionFactory特点:
 * 如果应用只访问一个数据库,则只需要创建一个SessionFactory实例,在应用初始化时创建该实例
 * 如果同时访问多个数据库,则需要对每个数据库单独创建一个SessionFactory实例
 
-所以,考虑资源损耗方面,一般一个项目中就只创建一个SessionFactory对象
-
-所以这里的解决方法是为SessionFactory专门创建一个工具类,放在系统中,给系统其他需要用到的SessionFactory使用
+所以,考虑资源损耗方面,一般一个项目中就只创建一个SessionFactory对象,所以这里的解决方法是为SessionFactory专门创建一个工具类,放在系统中,给系统其他需要用到的SessionFactory使用
 如代码:
 
 	public class HibernateUtils{
@@ -262,46 +241,35 @@ SessionFactory特点:
 #### Session类
 
 其中的Session类也是一个接口
-
 Session接口是Hibernate应用里使用最广泛的接口
 Session也被称为持久化管理器,它提供了和持久化相关的操作,如添加,更新,删除,加载和查询对象
-
-特点:
+特点
 不是线程安全的,因此在设计软件架构时,应该避免多个线程共享一个Session实例
 轻量级的.它的创建和销毁不需要消耗太多的资源
-
 Session类似jdbc中的connection
 Session对象是单线程对象,不能共用
-
 session操作数据常用的方法
 * 添加:save()方法
 * 修改:update()方法
 * 删除:delete()方法
 * 根据主键查询:get()方法,load()方法
 
-在而,代码:
-
+在而,代码
 `transcation.rollback()`
-
-实现了事务的回滚,那么也就是说Hibernate类似与git命令一样,有缓存机制
-
-即Hibernate的一级缓存
-
-它的缓存就是把数据存放到内存中,省去了Hibernate重复读取数据库数据的步骤
-但系统出现异常,可以将内存中的原始的缓存数据重新存放到数据库中,避免了数据的丢失
+实现了事务的回滚,那么也就是说Hibernate类似与git命令一样,有缓存机制,即Hibernate的一级缓存.它的缓存就是把数据存放到内存中,省去了Hibernate重复读取数据库数据的步骤,但系统出现异常,可以将内存中的原始的缓存数据重新存放到数据库中,避免了数据的丢失
 
 ### Hibernate里可以实现查询的对象
 
 #### Query对象
 
 需要用到hql(Hibernate Query Language)语句,它跟sql相似
-hql和sql的区别:
+hql和sql的区别
 
 * sql操作的是表和表字段
 * hql操作的是实体类和属性
 
 查询所有数据的hql语句:from 实体类名称
-例:
+例
 
 	Query query = session.createQuery("from Student");
 	List<Student> list = query.list();
@@ -310,8 +278,7 @@ hql和sql的区别:
 	}
 
 #### Criteria对象
-其不需要用到任何语句，
-查询所有数据的代码:
+其不需要用到任何语句，查询所有数据的代码
 
 	Criteria criteria = session.createCriteria(Student.class);
 	List<Student> list = criteria.list();
@@ -320,7 +287,7 @@ hql和sql的区别:
 	}
 
 #### SQLQuery对象
-可以使用SQL语句来操作,
+可以使用SQL语句来操作
 
 	SQLQuery sqlQuery = session.createSQLQuery("SELECT * FROM td_t_stuMsg");
 	List<Object[]> list = sqlQuery.list();
@@ -328,11 +295,8 @@ hql和sql的区别:
 		System.out.println(Arrays.toString(object));
 	}
 	
-其中，这里获取到的list集合是二维的集合
-
-如果需要得到和上面两个Query和Criteria对象获取的Student的所有对象信息,那么
-
-代码如下:
+其中，这里获取到的list集合是二维的集合,如果需要得到和上面两个Query和Criteria对象获取的Student的所有对象信息,那么
+代码如下
 
 	SQLQuery sqlQuery = session.createSQLQuery("SELECT * FROM td_t_stuMsg");
 	sqlQuery.addEntity(Student.class);
@@ -341,8 +305,6 @@ hql和sql的区别:
 		System.out.println(student);
 	}
 
-Query,Criteria,SQLQuery这三个对象,通常会使用前两个,第三个使用的比较少
-
-Hibernate的基本内容先写到这,当然还有许多内容并未总结,例如表的关系的配置等.到后面再慢慢总结
+Query,Criteria,SQLQuery这三个对象,通常会使用前两个,第三个使用的比较少,Hibernate的基本内容先写到这,当然还有许多内容并未总结,例如表的关系的配置等.到后面再慢慢总结
 
 谢谢

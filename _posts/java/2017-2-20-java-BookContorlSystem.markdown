@@ -31,11 +31,8 @@ tags: [java, codeing]
 ![java-bookControlSystem](/images/java/java-bookControlSystem-ui.png)
 
 之后就可以在这个面板中进行相关的借书还书操作
-
 代码实现的大致就这样,这里需要用到的开发工具是xampp软件包(Apache + MariaDB + PHP + Perl)作为服务器,当然里面也集成了MySQL数据库,主要的编码工具是Eclipse
-
 知道了这些,就可以进行开发工作了
-
 在进行开发工作时,需要对所做的系统进行规划,编写需求分析计划书和系统概要设计等等.由于这里我只是用来打发时间,所以没详细进行这编写,只是大概的绘制了系统界面功能图及流程图
 
 #### 系统流程图
@@ -111,14 +108,8 @@ tags: [java, codeing]
 		}
 	}
 
-连接数据库需要加载驱动,所以提前在项目的根目录下建立一个lib文件夹,将数据库驱动放置文件夹内,这里的[驱动下载页面][],下载后将解压得到的jar文件就是驱动
-
-代码中的`databaseUrl`,`databaseUser`和`databasePasswd`是自己本地利用lampp搭建的数据库服务器地址与自己配置的用户名和登录密码
-
-这个类ConnectionDatabase在连接数据库后会返回一条连接,也就是一个Connection对象
-
+连接数据库需要加载驱动,所以提前在项目的根目录下建立一个lib文件夹,将数据库驱动放置文件夹内,这里的[驱动下载页面][],下载后将解压得到的jar文件就是驱动.代码中的`databaseUrl`,`databaseUser`和`databasePasswd`是自己本地利用lampp搭建的数据库服务器地址与自己配置的用户名和登录密码,这个类ConnectionDatabase在连接数据库后会返回一条连接,也就是一个Connection对象
 当登录窗口运行后,当用户在该面板中产生点击操作后,程序将会连接数据库,也就是调用ConnectionDatabase类,获取一条数据库连接
-
 如下代码登录窗口代码,文件名为
 
 #### LoginWin.java
@@ -217,27 +208,15 @@ tags: [java, codeing]
 	}
 
 上面的代码主要作用是担当登录窗口的布局设置,
-其中代码:
-
+其中代码
 `new LoginAction(this,inputName, inputPasswd, btCancel, btLogin);`
-
-是将使LoginWin.java和LoginAction.java连接起来,
-
-使得登录窗口中的所有响应事件都由LoginAction.java文件来处理
-
-构造方法中的:
-
+是将使LoginWin.java和LoginAction.java连接起来,使得登录窗口中的所有响应事件都由LoginAction.java文件来处理
+构造方法中的
 `SwingUtilities.invokeLater(new Runnable())`
-
 方法是用来获取系统主题样式,并将登录窗口的样式主题设置为于系统主题一样
-
 方法中的参数代码:
-
 `UIManager.getSystemLookAndFeelClassName();`
-
-就是获取系统的主题样式
-
-与之相对应的相应事件操作的代码如下,文件名为
+就是获取系统的主题样式,与之相对应的相应事件操作的代码如下,文件名为
 
 #### LoginAction.java:
 
@@ -347,27 +326,15 @@ tags: [java, codeing]
 		}
 	}
 
-上面代码中actionPerformed(ActionEvent e)方法中,
-
-代码:
-
+上面代码中actionPerformed(ActionEvent e)方法中,代码
 `CheckAccount checkAccount = new CheckAccount();`
-
 将产生一个数据库连接
-
-代码:
-
+代码
 `int checkConnect = checkAccount.checkConnectDatabase();`
-
 中的checkConnectDatabase\(\)方法将是用来检查数据库服务器是否开启,如果是,则进行下一步:验证用户输入的用户名是否存在.就如下代码
-
 代码:
-
 `int n = checkAccount.checkNamePasswd(strInputName, strInputPasswd);`
-
-方法chexkNamePasswd\(strInputName, strInputPasswd\)将用户输入的用户名和密码作为参数,用来验证是否存在或正确
-
-因此,来看对象checkAccount的如下代码,文件名为
+方法chexkNamePasswd\(strInputName, strInputPasswd\)将用户输入的用户名和密码作为参数,用来验证是否存在或正确,因此,来看对象checkAccount的如下代码,文件名为
 
 #### CheckAccount.java:
 
@@ -502,16 +469,8 @@ tags: [java, codeing]
 		}
 	}
 
-看上面的代码,这里主要说方法checkNamePasswd\(String strInputName, String strInputPasswd\)的工作方式
-
-首相checkNamePasswd\(\)方法将调用自身类的一个getAllNamePasswd\(\)无参数方法,用来获取数据库中所有已注册的用户账户名和密码,getAllNamePasswd\()的返回值为`Vector<Vector<Object>>`双层的Vector集合,所以会返回一条双层的
-Vector集合,返回的集合将用在checkNamePasswd方法中作为局部变量
-方法checkNamePasswd()将先根据用户输入的用户名来和数据库中所有存在的用户名来对比,如果为对比到,那么将返回-2,意味着用户不存在
-
-方法checkNamePasswd()将会有多中int类型的返回值,其返回值将用在LoginAction类中的actionPerformed\(ActionEvent e\)中,将根据其返回值来判断是否存在/正确,如果返回值为1,那么证明用户输入的用户名和密码都正确,则将打开下一个信息面板,而关闭登录窗口.再将登录的账户名和密码封装进一个专有的Vector集合,并返回
-
-返回的Vector集合将会通过LoginAction类利用代码`new MsgShowWin(checkAccount);`来传递给MsgShowWin这个类,使得在打开这个面板的时候就可以直接通过账户名来获取借阅信息并显示在信息面板上
-
+看上面的代码,这里主要说方法checkNamePasswd\(String strInputName, String strInputPasswd\)的工作方式.首相checkNamePasswd\(\)方法将调用自身类的一个getAllNamePasswd\(\)无参数方法,用来获取数据库中所有已注册的用户账户名和密码,getAllNamePasswd\()的返回值为`Vector<Vector<Object>>`双层的Vector集合,所以会返回一条双层的Vector集合,返回的集合将用在checkNamePasswd方法中作为局部变量,方法checkNamePasswd()将先根据用户输入的用户名来和数据库中所有存在的用户名来对比,如果为对比到,那么将返回-2,意味着用户不存在
+方法checkNamePasswd()将会有多中int类型的返回值,其返回值将用在LoginAction类中的actionPerformed\(ActionEvent e\)中,将根据其返回值来判断是否存在/正确,如果返回值为1,那么证明用户输入的用户名和密码都正确,则将打开下一个信息面板,而关闭登录窗口.再将登录的账户名和密码封装进一个专有的Vector集合,并返回的Vector集合将会通过LoginAction类利用代码`new MsgShowWin(checkAccount);`来传递给MsgShowWin这个类,使得在打开这个面板的时候就可以直接通过账户名来获取借阅信息并显示在信息面板上
 如下信息窗口代码,文件名为
 
 #### MsgShowWin.java:
@@ -789,15 +748,9 @@ Vector集合,返回的集合将用在checkNamePasswd方法中作为局部变量
 同登录窗口的LoginWin.java文件一样,上面代码的大体作用一样是面板的布局
 
 面板第一时间显示的信息都在该类的构造方法中完成
-
-例如代码:
-
+例如代码
 `strShowDBMsg = new OperateDatabase().checkConnectDatabase();`
-
-将调用一个OperateDatabase类中的checkConnectDatabase\(\)方法来检测是否与数据库进行连接,其返回值为String类型的数据,用来在该面板底部显示数据库连接情况.起初并未打算在此处检测是否连接,但貌似那会儿没想到如何用来传递这种信息,所以就在这进行检测了
-
-后面的几行代码依然如此
-
+将调用一个OperateDatabase类中的checkConnectDatabase\(\)方法来检测是否与数据库进行连接,其返回值为String类型的数据,用来在该面板底部显示数据库连接情况.起初并未打算在此处检测是否连接,但貌似那会儿没想到如何用来传递这种信息,所以就在这进行检测了,后面的几行代码依然如此
 下面贴下于MsgShowWin类对应的action时间处理类的代码,文件名
 
 #### MsgShowWinAction.java:
@@ -1024,38 +977,15 @@ Vector集合,返回的集合将用在checkNamePasswd方法中作为局部变量
 
 	}
 
-上面的代码中,在actionPerformed(ActionEvent e)方法中就是执行借书/还书/查询的操作
-
-这里就直接看下实现借书操作的代码片段
-
-借书分为两步,先是查找书籍,再是借书
-
-先看查书,实现搜索图书的关键方法代码:
-
+上面的代码中,在actionPerformed(ActionEvent e)方法中就是执行借书/还书/查询的操作,这里就直接看下实现借书操作的代码片段.借书分为两步,先是查找书籍,再是借书,先看查书,实现搜索图书的关键方法代码:
 `searchBook(strjtfInputIndexBorrow);`
-
-这里将用户输入的图书索引用作OperateDatabase类中的searchBook(strjtfInputIndexBorrow)的参数,
-
-其searchBook(strjtfInputIndexBorrow)的返回值为String类型的,且只有两种返回值,
-
-其返回值赋值给strMsgorName
-
+这里将用户输入的图书索引用作OperateDatabase类中的searchBook(strjtfInputIndexBorrow)的参数,其searchBook(strjtfInputIndexBorrow)的返回值为String类型的,且只有两种返回值,其返回值赋值给strMsgorName
 从此行的下一行代码`if(strMsgorName.equals("未找到此书")){`就可以看出
-
-再看借书,代码是调用OperateDataBase中的borrowBook(strjtfInputIndexBorrow, strjtfShowBookBorrow, accountName)方法
-
-类OperateDataBase中的borrowBook\(\)方法有3个参数,
-
+再看借书,代码是调用OperateDataBase中的borrowBook(strjtfInputIndexBorrow, strjtfShowBookBorrow, accountName)方法,类OperateDataBase中的borrowBook\(\)方法有3个参数,
 `strjtfInputIndexBorrow`即为查找图书用的索引,查书不到就无法进行借书,所以查找图书所用的索引是正确的
-
 `strjtfShowBookBorrow`即图书名字
-
 `accountName`及账户名
-
-方法borrowBook()的返回值也为String类型,且只有两种情况
-
-同样根据下面一行代码`if(str.equals("借书成功")){`就可以确认,其跟searchBook(strjtfInputIndexBorrow)类似
-
+方法borrowBook()的返回值也为String类型,且只有两种情况,同样根据下面一行代码`if(str.equals("借书成功")){`就可以确认,其跟searchBook(strjtfInputIndexBorrow)类似
 再来看类OperateDatabase的代码,文件名为
 
 #### OperateDatabase.java:
@@ -1377,14 +1307,7 @@ Vector集合,返回的集合将用在checkNamePasswd方法中作为局部变量
 		
 	}
 
-其中的方法borrowBook()显示通过书名,来与已经借出去的书的信息库中进行对比,也就是有一张表专门用来存放记录所有已经借出去的书籍
-
-这样一来,如果对比到了的话说明这本书已经借出去,然而借出去的话有两种情况,一种是被自己借了,另一种就是被别人借走了,所以如果表中有该书名,那么还要根据表来对比账号名
-
-所以这样做,使得借书和还书都更简单了,所以借书的道理也差不多
-
-当然,这里我也自定义了一个对话框,
-
+其中的方法borrowBook()显示通过书名,来与已经借出去的书的信息库中进行对比,也就是有一张表专门用来存放记录所有已经借出去的书籍,这样一来,如果对比到了的话说明这本书已经借出去,然而借出去的话有两种情况,一种是被自己借了,另一种就是被别人借走了,所以如果表中有该书名,那么还要根据表来对比账号名.所以这样做,使得借书和还书都更简单了,所以借书的道理也差不多.当然,这里我也自定义了一个对话框,
 如下对话框代码,文加名字为
 
 #### MyJDialog.java:
@@ -1597,10 +1520,7 @@ Vector集合,返回的集合将用在checkNamePasswd方法中作为局部变量
 
 	}
 
-上面的代码只是自定义对话框,代码有点臃肿,
-
-然后就是main函数了
-
+上面的代码只是自定义对话框,代码有点臃肿,然后就是main函数了
 如下代码,文件名为
 
 #### BookControlSystem.java:

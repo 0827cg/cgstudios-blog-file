@@ -98,3 +98,14 @@ cmd下检测输入java -version和javac如若输出正常则环境变量就完�
 ![java-bookContorlSystem](/images/java/java-environmentVariable.png)
 
 好了,谢谢
+
+***
+
+### update
+
+给公司centos服务器配置的java环境如下
+    #Java-environment
+    export JAVA_HOME=/home/xm6f/dev/jdk1.7.0_80
+    export JRE_HOME=/home/xm6f/dev/jdk1.7.0_80/jre
+    export CLASS_PATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tool.jar:$JRE_HOME/lib
+    export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin

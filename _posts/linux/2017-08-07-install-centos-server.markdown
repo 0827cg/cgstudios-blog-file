@@ -3,7 +3,7 @@ layout: post
 title: "搭建centos服务器"
 date: 2017-08-07 20:46:22
 categories: linux
-tags: [linux, centos, redis, tomcat]
+tags: [linux, centos, redis, tomcat, nginx]
 ---
 
 7月31号第一天上班，boss找那个java开发的项目经理带我。第一天的工作内容就是搭建个centos服务器，其中已经可以外网访问了。centos中需要配置三台tomcat,不同端口访问，并配置redis数据库。工作不难，下面这些就是我在搭建过程中的记录
@@ -14,7 +14,11 @@ tags: [linux, centos, redis, tomcat]
 
 <!-- more -->
 
-按需求，在安装完系统后需要将主机ip设为静态ip，将ip固定。
+不过安装完centos系统后，其中需要配置一项，就是设置sudo命令可以被普通用户xm6f所使用，不然将会报
+    xm6f 不在 sudoers 文件中。此事将被报告。
+这个错，所以使用命令操作/etc/sudoers这个文件，在文件末尾添加如下一行
+`xm6f ALL=(ALL) ALL`
+完后就可以使用在普通用户下使用sudo命令来暂时使用root.按需求，在安装完系统后需要将主机ip设为静态ip，将ip固定。
 
 #### 设置静态ip
 
@@ -72,7 +76,35 @@ tags: [linux, centos, redis, tomcat]
 `sudo service network restart`
 重启网卡服务,之后查看ip信息则用命令
 `ip add`
-用此命令来查看ip信息，ip更改过来并且能上网，才算成功，之后就是为这台centos7服务器主机搭建环境安装tomcat等
+用此命令来查看ip信息，ip更改过来并且能上网，才算成功，之后就是为这台centos7服务器主机搭建java环境环境安装tomcat等，搭建java环境之前，需要将centos系统中的openjdk卸载，这是centos原装的，openjdk用得少，一般都用oraclejdk,所以看下面如何卸载openjdk
+
+#### 卸载openjdk
+
+卸载centos7上的openjdk
+先查看,使用命令
+`rpm -qa | grep java`
+例如我的输出,显示如下信息
+    java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
+    javapackages-tools-3.4.1-11.el7.noarch
+    java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
+    tzdata-java-2016g-2.el7.noarch
+    python-javapackages-3.4.1-11.el7.noarch
+    java-1.7.0-openjdk-headless-1.7.0.111-2.6.7.8.el7.x86_64
+    java-1.7.0-openjdk-1.7.0.111-2.6.7.8.el7.x86_64
+卸载命令
+    rpm -e --nodeps java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
+    rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
+还可以这样卸载
+    java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
+    java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
+最后我是删成了这样
+    [xm6f@localhost jdk1.7.0_80]$ rpm -qa | grep java
+    javapackages-tools-3.4.1-11.el7.noarch
+    tzdata-java-2016g-2.el7.noarch
+    python-javapackages-3.4.1-11.el7.noarch
+    [xm6f@localhost jdk1.7.0_80]$ java
+    -bash: /usr/bin/java: 没有那个文件或目录
+然后就是安装oraclejdk，配置环境变量，搭建java环境可以看这移步到这篇文章:[java环境搭建][]
 
 ### 安装Tomcat
 
@@ -97,7 +129,9 @@ tags: [linux, centos, redis, tomcat]
 `sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent`
 运行上面这条命令后，如果运行正常返回success那么再运行下面这条命令
 `sudo firewall-cmd --reload`
-若同样正常返回success那么就成功的对外开发了8080端口，另外提一点，因为现在操作的是centos7系统，centos7是使用firewall，在centos7之前的系统都是使用iptables，所以如果是centos7之前的系统，那么上面这两天命令就不能使用了，而需要操作iptables了。
+若同样正常返回success那么就成功的对外开发了8080端口，另外提一点，因为现在操作的是centos7系统，这里可以有两种方式来开放端口，一种就是上面的使用firewall-cmd命令，另一种就是操作iptables,iptables我不大会操作，不过后期再补上。如果没使用firewall-cmd来开放端口的的话，估计就是iptables里面开放了。我之前就是，同事使用iptables开放了端口，而我又不知道，使用firewall-cmd命令
+`sudo firewall-cmd --list-ports`
+查看了所以的已经开放了的端口号，发现我要开放的端口在这个输出中并不存在，那就肯定是iptables上进行开放了。
 
 #### 配置三台tomcat
 
@@ -279,7 +313,7 @@ tags: [linux, centos, redis, tomcat]
 
 centos7服务器电脑还需要安装redis
 还没接触过redis，后面跟同事了解到，redis是使用c编写的，redis一般在系统开发中只用作缓存，因为如果要使用的数据量太大的话，而且需要多次使用，如果不使用缓存，那么在每一次请求数据的时候都需要从数据库中进行查找，这样不仅耗时也好资源，所以如果使用redis缓存机制，用户请求数据的时候，如果数据量过大，就会使用redis将该数据暂时放入内存中，以键值对的方式存放着，并于该请求用户的临时id进行关联，使得再次使用到该数据的时候可以直接使用get方式从内存中读取，而不需要从数据库中查.....ok
-那么下载安装,下载redis-2.8.4.tar压缩包后，将压缩包上传到centos7服务器中
+那么下载安装,下载redis-2.8.4.tar压缩包后，将压缩包上传到centos7服务器中，现在操作的这台主机不知道为什么，只能通过tmp目录上传，那么每次上传完成之后在tmp目录下进行解压，之后直接cd进入解压得到的文件夹，例如这里解压得到的文件夹名为redis-2.8.6，使用命令进行编译，再编译完成之后会在目录redis-2.8.6/src下会得到可执行程序，最好把可执行程序单独拿出来，放到/usr/local目录下，同样也把存放在/redis-2.8.6目录下的redis.conf这个配置文件也拿出来，这是解压之后得到的。在/usr/local/目录下创建一个redis文件夹来一起存放，之后手动启动和关闭redis都在这个目录进行操作，后期配置开机启动也使用这个文件夹里的可执行程序。
 因为需要gcc编译，查看了后知道未安装gcc，那么先安装gcc,其命令
 `sudo yum install gcc make`
 之后解压redis-2.8.4.tar,并编译
@@ -315,7 +349,7 @@ centos7服务器电脑还需要安装redis
 	"aa"
 	127.0.0.1:6379> 
 
-只要这样测试结果正常，那就意味着redis安装成功，不过，redis需要配置开机启动
+只要这样测试结果正常，那就意味着redis安装成功，不过，redis需要配置开机启动，redis运行的端口号一般默认时6379
 
 #### 配置redis开机启动
 
@@ -407,6 +441,13 @@ centos7服务器电脑还需要安装redis
 	sudo chkconfig --list redis
 
 之后就可以重启系统进行测试了，只要确定redis能在开机后启动就可以了
+获取详细信息命令
+`./redis-server --help`
+`./redis-cli --help`
+关闭命令
+`pkill redis-server`
+或
+`redis-cli shutdown`
 
 #### 手动启动redis
 
@@ -461,7 +502,9 @@ OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算
 	sudo ./configure
 	sudo make && sudo make install
 
-这样的编译安装方式会将nginx安装到/usr/local/nginx下，然后我们进入到安装目录下的sbin文件夹中，使用命令
+这样的编译安装方式会自动将nginx安装到/usr/local/nginx下，如果我们需要自定义nginx的安装目录，例如我需要安装在/home/xm6f/dev/nginx-1.12.1目录下，那么可以使用下面的命令
+`./configure --prefix=/home/xm6f/dev/nginx-1.12.1`
+然后我们进入到安装目录下的sbin文件夹中，使用命令
 `sudo ./nginx`
 就可以运行nginx了
 提示
@@ -662,3 +705,22 @@ OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算
 查看服务的状态
 `service nginx status或systemctl nginx status`
 
+### 其他
+
+存储帐号的文件：/etc/passwd
+存储密码的文件：/etc/shadow
+查看所有用户命令
+`cat /etc/passwd`
+便捷的输出：
+`grep bash /etc/passwd`
+查看所有用户对于的密码
+`cat /etc/shadow | grep 用户名`
+通过/etc/shadow获取的只是密码加密后的Hash散列值，要获取明文密码，需要自己进行破解
+root下修改普通用户命令
+`passwd 用户名`
+root下修改自己密码命令
+`passwd`
+
+
+
+[java环境搭建][https://cgspace.date/2017/03/08/java/2017-3-08-java-EnvironmentVariable/]

@@ -309,6 +309,19 @@ tags: [linux, centos, redis, tomcat, nginx]
 
 至此，就完成了tomcat的安装
 
+另外提下，如果使用tomcat页面中manager-app按钮，实现登陆管理，那么就需要修改/conf/tomcat-users.xml这个文件来设置登录的用户名和密码，这里修改成如下，这里的修改就是取消注释后再进行修改
+或者直接再文件底部，但需要在tomcat-user标签里面，这里我添加代码的代码如下
+
+    <role rolename="tomcat" />
+    <role rolename="admin"/>
+    <role rolename="admin-gui"/>
+    <role rolename="manager"/>
+    <role rolename="manager-gui"/>
+    <role rolename="manager-script"/>
+    <user username="tomcat" password="tomcat" roles="tomcat,admin-gui,admin,manager,manager-gui,manager-script"/>
+
+即用户名和密码都为tomcat
+
 ### 安装redis
 
 centos7服务器电脑还需要安装redis

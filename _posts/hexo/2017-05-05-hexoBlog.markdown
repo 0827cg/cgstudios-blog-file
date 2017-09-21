@@ -1,0 +1,964 @@
+---
+layout: post
+title: "Hexo搭建博客"
+date: 2017-05-05 19:36:01
+categories: hexo
+tags: hexo
+---
+
+### 前言
+
+我之前使用的是jekyll来创建博客,现在转用hexo了.其实在使用jekyll的时候就了解了hexo,那个时候也打算使用hexo来搭建博客,但苦于当时没能把hexo环境搭建好,急于求成就用已经搭建好环境的jekyll来创建博客了.
+自己挺钟情hexo的,一直想用上她.恰好最近出差,利用空余的时间在宾馆把hexo环境搭建好了,把之前的博客也迁移到了hexo搭建的博客上面.做个总结,就写了这篇文章
+
+文章中的命令行代码都是在搭建环境时所另外复制保存的
+
+<!-- more -->
+
+### 了解使用hexo
+
+#### 什么是Hexo
+
+在使用hexo之前,首先我们先要了解什么是hexo,hexo是静态博客生成工具,单纯的生成静态html页面,将页面组合起来,就成了博客.当然,你也可以自己写html页面,写多个html页面,在将html页面手动联系起来,放在同一个站点下,也可以是一个博客,不过,使用hexo来创建博客将会更简单,更快捷方便。所以,hexo就是一个使搭建博客操作变得简单的工具,跟jekyll一个作用,详情,可以参考[Hexo官方文档][]
+ok,在我们已经知道hexo是什么之后,我们还需要稍微了解一下hexo她大概是怎么运作的
+首先知道Hexo这个工具是由JavaScript编写的,那么我们在本地运行Hexo就需要JavaScript环境,即node.js。所以,我们需要安装node.js,至于node.js是什么.这里就不做介绍.不过需要知道node.js中包括了npm,npm是node.js的一个模块管理工具,目前使用她所起到的作用就像是一个下载器。跟命令apt-get命令差不多，其实说到JavaScript,个人认为,JavaScript到以后将会发展成主流编程语言,取代java
+扯远了,,,,,,,,
+再来了解hexo的运作方式,先看hexo默认生成的目录结构
+如图:
+
+![hexo-blog-defaultFile](/images/hexo/hexo-blog-DefaultFile.png)
+
+各文件作用:
+
+* node_modules-存放所需要用到的js模块
+* scaffolds-存放页面模板
+* source-资源文件夹
+* themes-存放主题
+* _config.yml-站点的配置文件
+* db.json-数据缓存文件
+* package.json-应用程序的信息
+
+hexo有个专门存放主题的文件夹themes,存放这一个自带的主题landscape,更改主题则需要自己下载主题存放到该目录下,并在站点的配置文件_config.yml中进行配置,hexo生成静态html页面的原则就是依据模板文件和主题文件来自动生成html页面
+所以,说到这,仔细想想,也可以说hexo是一个框架,工具和框架貌似都差不多.跟jekyll不同的是,hexo运行时不会生成html页面,需要输入执行命令后,才会生存html页面
+生成的html页面将会在此时的hexo博客跟目录下新建一个public文件夹,所有的html页面和所需的资源都将存放到这个文件夹中.再说明一下,提交到github上面的文件也都只有public文件夹里的文件,其余的文件并不会提交到仓库中
+
+#### 搭建hexo环境
+
+前面说到,hexo是使用JavaScript语言编写的,那么就需要先搭建好JavaScript环境,即安装node.js，这里个人建议到[node.js官网][]下载安装,并配置好环境变量,我这是linux内核系统
+在linux下配置环境变量,运行命令
+`sudo gedit /etc/profile`
+在其中添加
+
+	#set for nodejs-environment
+	#NODE_HOME的路径填写自己的node的安装路径
+	export NODE_HOME=/usr/local/src/node-v7.3.0
+	export PATH=$NODE_HOME/bin:$PATH
+
+完后运行
+`source /etc/profile`
+来使配置立即生效.之后可以输入
+`node -v`
+来查看node.js是否安装成功,输出版本号则表示安装成功.完成node.js的安装,就可以使用npm命令来安装hexo了
+运行命令
+`npm install -g hexo-cli`
+完后测试安装是否成功,如果不成功,看输出是什么样的,我是配置了hexo的环境变量
+这里贴下我之前的命令行记录:
+
+	cg@cg-ThinkPad-Edge-E540 ~ $ node -v
+	v6.9.2
+	cg@cg-ThinkPad-Edge-E540 ~ $ npm
+
+	Usage: npm <command>
+
+	where <command> is one of:
+	    access, adduser, bin, bugs, c, cache, completion, config,
+	    ddp, dedupe, deprecate, dist-tag, docs, edit, explore, get,
+	    help, help-search, i, init, install, install-test, it, link,
+	    list, ln, login, logout, ls, outdated, owner, pack, ping,
+	    prefix, prune, publish, rb, rebuild, repo, restart, root,
+	    run, run-script, s, se, search, set, shrinkwrap, star,
+	    stars, start, stop, t, tag, team, test, tst, un, uninstall,
+	    unpublish, unstar, up, update, v, version, view, whoami
+
+	npm <cmd> -h     quick help on <cmd>
+	npm -l           display full usage info
+	npm help <term>  search for help on <term>
+	npm help npm     involved overview
+
+	Specify configs in the ini-formatted file:
+	    /home/cg/.npmrc
+	or on the command line via: npm <command> --key value
+	Config info can be viewed via: npm help config
+
+	npm@3.10.9 /opt/node-v6.9.2-linux-x64/lib/node_modules/npm
+	cg@cg-ThinkPad-Edge-E540 ~ $ sudo npm install hexo-cli -g
+	[sudo] password for cg: 
+	/opt/node-v6.9.2-linux-x64/bin/hexo -> /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/bin/hexo
+
+	> dtrace-provider@0.8.1 install /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/node_modules/dtrace-provider
+	> node scripts/install.js
+
+
+	> hexo-util@0.6.0 postinstall /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/node_modules/hexo-util
+	> npm run build:highlight
+
+
+	> hexo-util@0.6.0 build:highlight /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/node_modules/hexo-util
+	> node scripts/build_highlight_alias.js > highlight_alias.json
+
+	/opt/node-v6.9.2-linux-x64/lib
+	└─┬ hexo-cli@1.0.2 
+	  ├── abbrev@1.1.0 
+	  ├── bluebird@3.5.0 
+	  ├─┬ chalk@1.1.3 
+	  │ ├── ansi-styles@2.2.1 
+	  │ ├── escape-string-regexp@1.0.5 
+	  │ ├─┬ has-ansi@2.0.0 
+	  │ │ └── ansi-regex@2.1.1 
+	  │ ├── strip-ansi@3.0.1 
+	  │ └── supports-color@2.0.0 
+	  ├─┬ hexo-fs@0.1.6 
+	  │ ├─┬ chokidar@1.6.1 
+	  │ │ ├─┬ anymatch@1.3.0 
+	  │ │ │ ├── arrify@1.0.1 
+	  │ │ │ └─┬ micromatch@2.3.11 
+	  │ │ │   ├─┬ arr-diff@2.0.0 
+	  │ │ │   │ └── arr-flatten@1.0.3 
+	  │ │ │   ├── array-unique@0.2.1 
+	  │ │ │   ├─┬ braces@1.8.5 
+	  │ │ │   │ ├─┬ expand-range@1.8.2 
+	  │ │ │   │ │ └─┬ fill-range@2.2.3 
+	  │ │ │   │ │   ├── is-number@2.1.0 
+	  │ │ │   │ │   ├── isobject@2.1.0 
+	  │ │ │   │ │   ├── randomatic@1.1.6 
+	  │ │ │   │ │   └── repeat-string@1.6.1 
+	  │ │ │   │ ├── preserve@0.2.0 
+	  │ │ │   │ └── repeat-element@1.1.2 
+	  │ │ │   ├─┬ expand-brackets@0.1.5 
+	  │ │ │   │ └── is-posix-bracket@0.1.1 
+	  │ │ │   ├── extglob@0.3.2 
+	  │ │ │   ├── filename-regex@2.0.0 
+	  │ │ │   ├─┬ kind-of@3.2.0 
+	  │ │ │   │ └── is-buffer@1.1.5 
+	  │ │ │   ├─┬ normalize-path@2.1.1 
+	  │ │ │   │ └── remove-trailing-separator@1.0.1 
+	  │ │ │   ├─┬ object.omit@2.0.1 
+	  │ │ │   │ ├─┬ for-own@0.1.5 
+	  │ │ │   │ │ └── for-in@1.0.2 
+	  │ │ │   │ └── is-extendable@0.1.1 
+	  │ │ │   ├─┬ parse-glob@3.0.4 
+	  │ │ │   │ ├── glob-base@0.3.0 
+	  │ │ │   │ └── is-dotfile@1.0.2 
+	  │ │ │   └─┬ regex-cache@0.4.3 
+	  │ │ │     ├── is-equal-shallow@0.1.3 
+	  │ │ │     └── is-primitive@2.0.0 
+	  │ │ ├── async-each@1.0.1 
+	  │ │ ├── glob-parent@2.0.0 
+	  │ │ ├── inherits@2.0.3 
+	  │ │ ├─┬ is-binary-path@1.0.1 
+	  │ │ │ └── binary-extensions@1.8.0 
+	  │ │ ├─┬ is-glob@2.0.1 
+	  │ │ │ └── is-extglob@1.0.0 
+	  │ │ ├── path-is-absolute@1.0.1 
+	  │ │ └─┬ readdirp@2.1.0 
+	  │ │   ├─┬ minimatch@3.0.3 
+	  │ │   │ └─┬ brace-expansion@1.1.7 
+	  │ │   │   ├── balanced-match@0.4.2 
+	  │ │   │   └── concat-map@0.0.1 
+	  │ │   ├─┬ readable-stream@2.2.9 
+	  │ │   │ ├── buffer-shims@1.0.0 
+	  │ │   │ ├── core-util-is@1.0.2 
+	  │ │   │ ├── isarray@1.0.0 
+	  │ │   │ ├── process-nextick-args@1.0.7 
+	  │ │   │ ├── string_decoder@1.0.0 
+	  │ │   │ └── util-deprecate@1.0.2 
+	  │ │   └── set-immediate-shim@1.0.1 
+	  │ └── graceful-fs@4.1.11 
+	  ├─┬ hexo-log@0.1.2 
+	  │ └─┬ bunyan@1.8.10 
+	  │   ├─┬ dtrace-provider@0.8.1 
+	  │   │ └── nan@2.6.2 
+	  │   ├── moment@2.18.1 
+	  │   ├─┬ mv@2.1.1 
+	  │   │ ├─┬ mkdirp@0.5.1 
+	  │   │ │ └── minimist@0.0.8 
+	  │   │ ├── ncp@2.0.0 
+	  │   │ └─┬ rimraf@2.4.5 
+	  │   │   └─┬ glob@6.0.4 
+	  │   │     ├─┬ inflight@1.0.6 
+	  │   │     │ └── wrappy@1.0.2 
+	  │   │     └── once@1.4.0 
+	  │   └── safe-json-stringify@1.0.4 
+	  ├─┬ hexo-util@0.6.0 
+	  │ ├─┬ camel-case@3.0.0 
+	  │ │ ├─┬ no-case@2.3.1 
+	  │ │ │ └── lower-case@1.1.4 
+	  │ │ └── upper-case@1.1.3 
+	  │ ├─┬ cross-spawn@4.0.2 
+	  │ │ ├─┬ lru-cache@4.0.2 
+	  │ │ │ ├── pseudomap@1.0.2 
+	  │ │ │ └── yallist@2.1.2 
+	  │ │ └─┬ which@1.2.14 
+	  │ │   └── isexe@2.0.0 
+	  │ ├── highlight.js@9.11.0 
+	  │ ├── html-entities@1.2.1 
+	  │ └── striptags@2.2.1 
+	  ├── minimist@1.2.0 
+	  ├── object-assign@4.1.1 
+	  └─┬ tildify@1.2.0 
+	    └── os-homedir@1.0.2 
+
+	npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@^1.0.0 (node_modules/hexo-cli/node_modules/chokidar/node_modules/fsevents):
+	npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.1.1: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+	cg@cg-ThinkPad-Edge-E540 ~ $ hexo
+	hexo: command not found
+	cg@cg-ThinkPad-Edge-E540 ~ $ hexo init test
+	hexo: command not found
+	cg@cg-ThinkPad-Edge-E540 ~ $ 
+
+这里看得出我的hexo安装并为成功,看得出此时需要做的是配置环境变量
+而我,那个时候的我第一时间没那么去做
+
+继续看如下:
+
+	cg@cg-ThinkPad-Edge-E540 ~ $ export NVM_DIR="$HOME/.nvm"
+	cg@cg-ThinkPad-Edge-E540 ~ $ nvm
+	No command 'nvm' found, did you mean:
+	 Command 'npm' from package 'npm' (universe)
+	 Command 'nvi' from package 'nvi' (universe)
+	 Command 'vm' from package 'mgetty-voice' (universe)
+	 Command 'nam' from package 'nam' (universe)
+	 Command 'pvm' from package 'pvm' (universe)
+	 Command 'n-m' from package 'python-networkmanager' (universe)
+	 Command 'lvm' from package 'lvm2' (main)
+	 Command 'nm' from package 'binutils' (main)
+	 Command 'nm' from package 'binutils-multiarch' (main)
+	 Command 'kvm' from package 'qemu-kvm' (main)
+	nvm: command not found
+	cg@cg-ThinkPad-Edge-E540 ~ $ hexo
+	hexo: command not found
+	cg@cg-ThinkPad-Edge-E540 ~ $ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+	[sudo] password for cg: 
+	Sorry, try again.
+	[sudo] password for cg: 
+
+	## Installing the NodeSource Node.js v6.x repo...
+
+
+	## Populating apt-get cache...
+
+	+ apt-get update
+	忽略 http://mirrors.ustc.edu.cn rosa InRelease
+	忽略 http://mirrors.hust.edu.cn trusty InRelease
+	命中 http://archive.ubuntukylin.com:10006 xenial InRelease                     
+	命中 http://mirrors.ustc.edu.cn rosa Release.gpg                               
+	命中 http://mirrors.hust.edu.cn trusty-updates InRelease                       
+	命中 http://mirrors.ustc.edu.cn rosa Release                                   
+	命中 http://mirrors.hust.edu.cn trusty Release.gpg                             
+	命中 http://archive.ubuntukylin.com:10006 xenial/main amd64 Packages           
+	命中 http://mirrors.ustc.edu.cn rosa/main amd64 Packages                       
+	命中 http://mirrors.hust.edu.cn trusty-updates/main amd64 Packages             
+	命中 http://archive.ubuntukylin.com:10006 xenial/main i386 Packages            
+	命中 http://mirrors.hust.edu.cn trusty-updates/restricted amd64 Packages       
+	命中 http://mirrors.ustc.edu.cn rosa/upstream amd64 Packages                   
+	命中 http://archive.ubuntukylin.com:10006 xenial/main Translation-en           
+	命中 http://mirrors.hust.edu.cn trusty-updates/universe amd64 Packages         
+	命中 http://mirrors.ustc.edu.cn rosa/import amd64 Packages                     
+	命中 http://mirrors.hust.edu.cn trusty-updates/multiverse amd64 Packages       
+	命中 http://mirrors.ustc.edu.cn rosa/main i386 Packages                        
+	命中 http://mirrors.hust.edu.cn trusty-updates/main i386 Packages              
+	命中 http://mirrors.ustc.edu.cn rosa/upstream i386 Packages                    
+	命中 http://mirrors.hust.edu.cn trusty-updates/restricted i386 Packages        
+	获取：1 http://security.ubuntu.com trusty-security InRelease [65.9 kB]         
+	命中 http://mirrors.hust.edu.cn trusty-updates/universe i386 Packages          
+	命中 http://mirrors.ustc.edu.cn rosa/import i386 Packages                      
+	命中 http://mirrors.hust.edu.cn trusty-updates/multiverse i386 Packages        
+	命中 http://mirrors.hust.edu.cn trusty-updates/main Translation-en             
+	命中 http://mirrors.hust.edu.cn trusty-updates/multiverse Translation-en       
+	命中 http://mirrors.hust.edu.cn trusty-updates/restricted Translation-en       
+	命中 http://mirrors.hust.edu.cn trusty-updates/universe Translation-en         
+	命中 http://mirrors.hust.edu.cn trusty Release                                 
+	命中 http://mirrors.hust.edu.cn trusty/main amd64 Packages                     
+	忽略 http://ppa.launchpad.net trusty InRelease                                 
+	命中 http://mirrors.hust.edu.cn trusty/restricted amd64 Packages               
+	命中 http://mirrors.hust.edu.cn trusty/universe amd64 Packages                 
+	忽略 http://archive.canonical.com trusty InRelease                             
+	忽略 http://extra.linuxmint.com rosa InRelease                                 
+	忽略 http://ppa.launchpad.net trusty InRelease                                 
+	命中 http://mirrors.hust.edu.cn trusty/multiverse amd64 Packages               
+	命中 http://mirrors.hust.edu.cn trusty/main i386 Packages                      
+	命中 http://mirrors.hust.edu.cn trusty/restricted i386 Packages                
+	命中 http://mirrors.hust.edu.cn trusty/universe i386 Packages                  
+	命中 http://mirrors.hust.edu.cn trusty/multiverse i386 Packages                
+	命中 http://archive.canonical.com trusty Release.gpg                           
+	命中 http://mirrors.hust.edu.cn trusty/main Translation-zh_CN                  
+	获取：2 http://security.ubuntu.com trusty-security/main amd64 Packages [610 kB]
+	命中 http://mirrors.hust.edu.cn trusty/main Translation-en                     
+	命中 http://mirrors.hust.edu.cn trusty/multiverse Translation-zh_CN            
+	命中 http://archive.canonical.com trusty Release                               
+	命中 http://mirrors.hust.edu.cn trusty/multiverse Translation-en               
+	命中 http://mirrors.hust.edu.cn trusty/restricted Translation-zh_CN            
+	命中 http://mirrors.hust.edu.cn trusty/restricted Translation-en               
+	命中 http://archive.canonical.com trusty/partner amd64 Packages                
+	命中 http://mirrors.hust.edu.cn trusty/universe Translation-zh_CN              
+	命中 http://mirrors.hust.edu.cn trusty/universe Translation-en                 
+	命中 http://archive.canonical.com trusty/partner i386 Packages                 
+	命中 http://extra.linuxmint.com rosa Release.gpg                               
+	命中 http://archive.canonical.com trusty/partner Translation-en                
+	忽略 http://mirrors.ustc.edu.cn rosa/import Translation-zh_CN                  
+	忽略 http://mirrors.ustc.edu.cn rosa/import Translation-zh                     
+	忽略 http://mirrors.ustc.edu.cn rosa/import Translation-en                     
+	忽略 http://ppa.launchpad.net trusty InRelease                                 
+	忽略 http://mirrors.ustc.edu.cn rosa/main Translation-zh_CN                    
+	忽略 http://mirrors.ustc.edu.cn rosa/main Translation-zh                       
+	忽略 http://mirrors.hust.edu.cn trusty/main Translation-zh                     
+	忽略 http://mirrors.ustc.edu.cn rosa/main Translation-en                       
+	忽略 http://mirrors.hust.edu.cn trusty/multiverse Translation-zh               
+	忽略 http://mirrors.ustc.edu.cn rosa/upstream Translation-zh_CN                
+	忽略 http://mirrors.hust.edu.cn trusty/restricted Translation-zh               
+	忽略 http://mirrors.ustc.edu.cn rosa/upstream Translation-zh                   
+	忽略 http://mirrors.hust.edu.cn trusty/universe Translation-zh                 
+	忽略 http://mirrors.ustc.edu.cn rosa/upstream Translation-en                   
+	获取：3 http://security.ubuntu.com trusty-security/restricted amd64 Packages [14.0 kB]
+	命中 http://ppa.launchpad.net trusty Release.gpg                               
+	命中 http://extra.linuxmint.com rosa Release                                   
+	获取：4 http://security.ubuntu.com trusty-security/universe amd64 Packages [157 kB]
+	命中 http://ppa.launchpad.net trusty Release.gpg                               
+	命中 http://extra.linuxmint.com rosa/main amd64 Packages                       
+	忽略 http://ppa.launchpad.net trusty Release.gpg                               
+	命中 http://ppa.launchpad.net trusty Release                                   
+	获取：5 http://security.ubuntu.com trusty-security/multiverse amd64 Packages [4,135 B]
+	获取：6 http://security.ubuntu.com trusty-security/main i386 Packages [568 kB] 
+	命中 http://ppa.launchpad.net trusty Release                                   
+	忽略 http://ppa.launchpad.net trusty Release                                   
+	命中 http://ppa.launchpad.net trusty/main Sources                              
+	获取：7 http://security.ubuntu.com trusty-security/restricted i386 Packages [13.8 kB]
+	命中 http://ppa.launchpad.net trusty/main amd64 Packages                       
+	命中 http://ppa.launchpad.net trusty/main i386 Packages                        
+	获取：8 http://security.ubuntu.com trusty-security/universe i386 Packages [157 kB]
+	命中 http://ppa.launchpad.net trusty/main Translation-en                       
+	获取：9 http://security.ubuntu.com trusty-security/multiverse i386 Packages [4,288 B]
+	命中 http://ppa.launchpad.net trusty/main Sources                              
+	命中 http://ppa.launchpad.net trusty/main i386 Packages                        
+	命中 http://ppa.launchpad.net trusty/main amd64 Packages                       
+	命中 http://ppa.launchpad.net trusty/main Translation-en                       
+	命中 http://security.ubuntu.com trusty-security/main Translation-en            
+	命中 http://security.ubuntu.com trusty-security/multiverse Translation-en      
+	命中 http://security.ubuntu.com trusty-security/restricted Translation-en      
+	忽略 http://ppa.launchpad.net trusty/main Sources/DiffIndex                    
+	命中 http://security.ubuntu.com trusty-security/universe Translation-en        
+	忽略 http://ppa.launchpad.net trusty/main amd64 Packages/DiffIndex             
+	忽略 http://ppa.launchpad.net trusty/main i386 Packages/DiffIndex              
+	命中 http://extra.linuxmint.com rosa/main i386 Packages                        
+	忽略 http://extra.linuxmint.com rosa/main Translation-zh                       
+	忽略 http://extra.linuxmint.com rosa/main Translation-en                       
+	忽略 http://extra.linuxmint.com rosa/main Translation-zh_CN                    
+	忽略 http://ppa.launchpad.net trusty/main Translation-zh                       
+	忽略 http://ppa.launchpad.net trusty/main Translation-zh_CN
+	忽略 http://ppa.launchpad.net trusty/main Translation-en                       
+	错误 http://ppa.launchpad.net trusty/main amd64 Packages
+	  404  Not Found
+	错误 http://ppa.launchpad.net trusty/main Sources
+	  404  Not Found
+	错误 http://ppa.launchpad.net trusty/main i386 Packages
+	  404  Not Found
+	下载 1,594 kB，耗时 38秒 (41.3 kB/s)
+	W: 无法下载 http://ppa.launchpad.net/kilian/f.lux/ubuntu/dists/trusty/main/source/Sources  404  Not Found
+
+	W: 无法下载 http://ppa.launchpad.net/kilian/f.lux/ubuntu/dists/trusty/main/binary-amd64/Packages  404  Not Found
+
+	W: 无法下载 http://ppa.launchpad.net/kilian/f.lux/ubuntu/dists/trusty/main/binary-i386/Packages  404  Not Found
+
+	E: Some index files failed to download. They have been ignored, or old ones used instead.
+	Error executing command, exiting
+	cg@cg-ThinkPad-Edge-E540 ~ $ sudo apt-get install -y nodejs
+	正在读取软件包列表... 完成
+	正在分析软件包的依赖关系树       
+	正在读取状态信息... 完成       
+	nodejs is already the newest version.
+	升级了 0 个软件包，新安装了 0 个软件包，要卸载 0 个软件包，有 198 个软件包未被升级。
+	cg@cg-ThinkPad-Edge-E540 ~ $ 
+
+看这个记录有意思,想想以后要是遇到问题真得先让自己清醒下来,抽根烟缓缓,不然又会傻逼一样犯错
+不过运行上面那步之后,我才开始验证是否是环境变量的原因了
+
+	cg@cg-ThinkPad-Edge-E540 ~ $ cd /opt/node-v6.9.2-linux-x64/lib
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib $ ls
+	node_modules
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib $ cd node_modules
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules $ ls
+	hexo  hexo-cli  npm
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules $ cd hexo
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo $ ls
+	bin  CONTRIBUTING.md  lib  LICENSE  node_modules  package.json  README.md
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo $ cd bin
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo/bin $ ls
+	hexo
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo/bin $ hexo
+	hexo: command not found
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo/bin $ ./hexo
+	Usage: hexo <command>
+
+	Commands:
+	  help     Get help on a command.
+	  init     Create a new Hexo folder.
+	  version  Display version information.
+
+	Global Options:
+	  --config  Specify config file instead of using _config.yml
+	  --cwd     Specify the CWD
+	  --debug   Display all verbose messages in the terminal
+	  --draft   Display draft posts
+	  --safe    Disable all plugins and scripts
+	  --silent  Hide output on console
+
+	For more help, you can use 'hexo help [command]' for the detailed information
+	or you can check the docs: http://hexo.io/docs/
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo/bin $ cd ../../
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules $ ls
+	hexo  hexo-cli  npm
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules $ cd hexo-cli
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli $ ls
+	assets  bin  completion  lib  LICENSE  node_modules  package.json  README.md
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli $ cd bin
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/bin $ ls
+	hexo
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/bin $ ./hexo
+	Usage: hexo <command>
+
+	Commands:
+	  help     Get help on a command.
+	  init     Create a new Hexo folder.
+	  version  Display version information.
+
+	Global Options:
+	  --config  Specify config file instead of using _config.yml
+	  --cwd     Specify the CWD
+	  --debug   Display all verbose messages in the terminal
+	  --draft   Display draft posts
+	  --safe    Disable all plugins and scripts
+	  --silent  Hide output on console
+
+	For more help, you can use 'hexo help [command]' for the detailed information
+	or you can check the docs: http://hexo.io/docs/
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/bin $ ./hexo -v
+	hexo-cli: 1.0.2
+	os: Linux 3.19.0-32-generic linux x64
+	http_parser: 2.7.0
+	node: 6.9.2
+	v8: 5.1.281.88
+	uv: 1.9.1
+	zlib: 1.2.8
+	ares: 1.10.1-DEV
+	icu: 57.1
+	modules: 48
+	openssl: 1.0.2j
+
+	cg@cg-ThinkPad-Edge-E540 /opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/bin $ 
+
+确定了是环境变量的因素后,就开始解决了
+
+	cg@cg-ThinkPad-Edge-E540 ~ $ sudo gedit /etc/profile
+	[sudo] password for cg: 
+	cg@cg-ThinkPad-Edge-E540 ~ $ source /etc/profile
+	cg@cg-ThinkPad-Edge-E540 ~ $ hexo
+	Usage: hexo <command>
+
+	Commands:
+	  help     Get help on a command.
+	  init     Create a new Hexo folder.
+	  version  Display version information.
+
+	Global Options:
+	  --config  Specify config file instead of using _config.yml
+	  --cwd     Specify the CWD
+	  --debug   Display all verbose messages in the terminal
+	  --draft   Display draft posts
+	  --safe    Disable all plugins and scripts
+	  --silent  Hide output on console
+
+	For more help, you can use 'hexo help [command]' for the detailed information
+	or you can check the docs: http://hexo.io/docs/
+	cg@cg-ThinkPad-Edge-E540 ~ $ 
+
+其中添加的环境变量:
+
+	#set for hexo-environment
+	export HEXO_HOME=/opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli
+	export PATH=$HEXO_HOME/bin:$PATH
+
+上面的HEXO_HOME的路径修改成自己的
+后面生成博客目录出了点问题:
+
+	cg@cg-ThinkPad-Edge-E540 ~/Work $ cd HexoWork
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork $ ls
+	blog
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork $ cd blog
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork/blog $ hexo -v
+	hexo-cli: 1.0.2
+	os: Linux 3.19.0-32-generic linux x64
+	http_parser: 2.7.0
+	node: 6.9.2
+	v8: 5.1.281.88
+	uv: 1.9.1
+	zlib: 1.2.8
+	ares: 1.10.1-DEV
+	icu: 57.1
+	modules: 48
+	openssl: 1.0.2j
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork/blog $ hexo init
+	INFO  Cloning hexo-starter to ~/Work/HexoWork/blog
+	Cloning into '/home/cg/Work/HexoWork/blog'...
+	remote: Counting objects: 53, done.
+	remote: Total 53 (delta 0), reused 0 (delta 0), pack-reused 53
+	Unpacking objects: 100% (53/53), done.
+	Checking connectivity... done.
+	Submodule 'themes/landscape' (https://github.com/hexojs/hexo-theme-landscape.git) registered for path 'themes/landscape'
+	Cloning into 'themes/landscape'...
+	remote: Counting objects: 775, done.
+	remote: Compressing objects: 100% (6/6), done.
+	remote: Total 775 (delta 1), reused 0 (delta 0), pack-reused 769
+	Receiving objects: 100% (775/775), 2.53 MiB | 7.00 KiB/s, done.
+	Resolving deltas: 100% (394/394), done.
+	Checking connectivity... done.
+	Submodule path 'themes/landscape': checked out 'decdc2d9956776cbe95420ae94bac87e22468d38'
+	INFO  Install dependencies
+	npm WARN deprecated swig@1.4.2: This package is no longer maintained
+	^CINFO  Farewell...] \ fetchMetadata: sill mapToRegistry uri https://registry.npmjs.org/argparse
+	/opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/lib/hexo.js:95
+	    hexo.exit().then(function() {
+		       ^
+
+	TypeError: Cannot read property 'then' of undefined
+	    at process.<anonymous> (/opt/node-v6.9.2-linux-x64/lib/node_modules/hexo-cli/lib/hexo.js:95:16)
+	    at emitNone (events.js:86:13)
+	    at process.emit (events.js:185:7)
+	    at Signal.wrap.onsignal (internal/process.js:199:44)
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork/blog $ 
+
+这个问题貌似是因为网速问题,有个方法说是更改淘宝镜像地址可以解决,不过我没有这样做,再运行一次,过一会儿时间就好了
+安装hexo成功现实
+
+	cg@cg-ThinkPad-Edge-E540 ~ $ hexo
+	Usage: hexo <command>
+
+	Commands:
+	  help     Get help on a command.
+	  init     Create a new Hexo folder.
+	  version  Display version information.
+
+	Global Options:
+	  --config  Specify config file instead of using _config.yml
+	  --cwd     Specify the CWD
+	  --debug   Display all verbose messages in the terminal
+	  --draft   Display draft posts
+	  --safe    Disable all plugins and scripts
+	  --silent  Hide output on console
+
+	For more help, you can use 'hexo help [command]' for the detailed information
+	or you can check the docs: http://hexo.io/docs/
+	cg@cg-ThinkPad-Edge-E540 ~ $ node -v
+	v6.9.2
+	cg@cg-ThinkPad-Edge-E540 ~ $ hexo -v
+	hexo-cli: 1.0.2
+	os: Linux 3.19.0-32-generic linux x64
+	http_parser: 2.7.0
+	node: 6.9.2
+	v8: 5.1.281.88
+	uv: 1.9.1
+	zlib: 1.2.8
+	ares: 1.10.1-DEV
+	icu: 57.1
+	modules: 48
+	openssl: 1.0.2j
+	cg@cg-ThinkPad-Edge-E540 ~ $ cd Work/HexoWork
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork $ ls
+	blog
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork $ cd blog
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork/blog $ ls
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork/blog $ hexo init
+	INFO  Cloning hexo-starter to ~/Work/HexoWork/blog
+	Cloning into '/home/cg/Work/HexoWork/blog'...
+	remote: Counting objects: 53, done.
+	remote: Total 53 (delta 0), reused 0 (delta 0), pack-reused 53
+	Unpacking objects: 100% (53/53), done.
+	Checking connectivity... done.
+	Submodule 'themes/landscape' (https://github.com/hexojs/hexo-theme-landscape.git) registered for path 'themes/landscape'
+	Cloning into 'themes/landscape'...
+	remote: Counting objects: 775, done.
+	remote: Compressing objects: 100% (6/6), done.
+	remote: Total 775 (delta 1), reused 0 (delta 0), pack-reused 769
+	Receiving objects: 100% (775/775), 2.53 MiB | 24.00 KiB/s, done.
+	Resolving deltas: 100% (394/394), done.
+	Checking connectivity... done.
+	Submodule path 'themes/landscape': checked out 'decdc2d9956776cbe95420ae94bac87e22468d38'
+	INFO  Install dependencies
+	npm WARN deprecated swig@1.4.2: This package is no longer maintained
+	[    ...[    ..............] - fetchMetadata: sill mapToRegistry uri https://registry.nnpm WARN prefer global marked@0.3.6 should be installed with -g
+
+	> dtrace-provider@0.8.1 install /home/cg/Work/HexoWork/blog/node_modules/dtrace-provider
+	> node scripts/install.js
+
+
+	> hexo-util@0.6.0 postinstall /home/cg/Work/HexoWork/blog/node_modules/hexo-util
+	> npm run build:highlight
+
+
+	> hexo-util@0.6.0 build:highlight /home/cg/Work/HexoWork/blog/node_modules/hexo-util
+	> node scripts/build_highlight_alias.js > highlight_alias.json
+
+	hexo-site@0.0.0 /home/cg/Work/HexoWork/blog
+	├─┬ hexo@3.3.5 
+	│ ├── abbrev@1.1.0 
+	│ ├── archy@1.0.0 
+	│ ├── bluebird@3.5.0 
+	│ ├─┬ chalk@1.1.3 
+	│ │ ├── ansi-styles@2.2.1 
+	│ │ ├── escape-string-regexp@1.0.5 
+	│ │ ├─┬ has-ansi@2.0.0 
+	│ │ │ └── ansi-regex@2.1.1 
+	│ │ ├── strip-ansi@3.0.1 
+	│ │ └── supports-color@2.0.0 
+	│ ├─┬ cheerio@0.20.0 
+	│ │ ├─┬ css-select@1.2.0 
+	│ │ │ ├── boolbase@1.0.0 
+	│ │ │ ├── css-what@2.1.0 
+	│ │ │ ├── domutils@1.5.1 
+	│ │ │ └── nth-check@1.0.1 
+	│ │ ├─┬ dom-serializer@0.1.0 
+	│ │ │ └── domelementtype@1.1.3 
+	│ │ ├── entities@1.1.1 
+	│ │ ├─┬ htmlparser2@3.8.3 
+	│ │ │ ├── domelementtype@1.3.0 
+	│ │ │ ├── domhandler@2.3.0 
+	│ │ │ ├── entities@1.0.0 
+	│ │ │ └─┬ readable-stream@1.1.14 
+	│ │ │   ├── core-util-is@1.0.2 
+	│ │ │   ├── isarray@0.0.1 
+	│ │ │   └── string_decoder@0.10.31 
+	│ │ └─┬ jsdom@7.2.2 
+	│ │   ├── abab@1.0.3 
+	│ │   ├── acorn@2.7.0 
+	│ │   ├── acorn-globals@1.0.9 
+	│ │   ├── cssom@0.3.2 
+	│ │   ├── cssstyle@0.2.37 
+	│ │   ├─┬ escodegen@1.8.1 
+	│ │   │ ├── esprima@2.7.3 
+	│ │   │ ├── estraverse@1.9.3 
+	│ │   │ ├── esutils@2.0.2 
+	│ │   │ ├─┬ optionator@0.8.2 
+	│ │   │ │ ├── deep-is@0.1.3 
+	│ │   │ │ ├── fast-levenshtein@2.0.6 
+	│ │   │ │ ├── levn@0.3.0 
+	│ │   │ │ ├── prelude-ls@1.1.2 
+	│ │   │ │ ├── type-check@0.3.2 
+	│ │   │ │ └── wordwrap@1.0.0 
+	│ │   │ └── source-map@0.2.0 
+	│ │   ├── nwmatcher@1.3.9 
+	│ │   ├── parse5@1.5.1 
+	│ │   ├─┬ request@2.81.0 
+	│ │   │ ├── aws-sign2@0.6.0 
+	│ │   │ ├── aws4@1.6.0 
+	│ │   │ ├── caseless@0.12.0 
+	│ │   │ ├─┬ combined-stream@1.0.5 
+	│ │   │ │ └── delayed-stream@1.0.0 
+	│ │   │ ├── extend@3.0.1 
+	│ │   │ ├── forever-agent@0.6.1 
+	│ │   │ ├─┬ form-data@2.1.4 
+	│ │   │ │ └── asynckit@0.4.0 
+	│ │   │ ├─┬ har-validator@4.2.1 
+	│ │   │ │ ├─┬ ajv@4.11.8 
+	│ │   │ │ │ ├── co@4.6.0 
+	│ │   │ │ │ └─┬ json-stable-stringify@1.0.1 
+	│ │   │ │ │   └── jsonify@0.0.0 
+	│ │   │ │ └── har-schema@1.0.5 
+	│ │   │ ├─┬ hawk@3.1.3 
+	│ │   │ │ ├── boom@2.10.1 
+	│ │   │ │ ├── cryptiles@2.0.5 
+	│ │   │ │ ├── hoek@2.16.3 
+	│ │   │ │ └── sntp@1.0.9 
+	│ │   │ ├─┬ http-signature@1.1.1 
+	│ │   │ │ ├── assert-plus@0.2.0 
+	│ │   │ │ ├─┬ jsprim@1.4.0 
+	│ │   │ │ │ ├── assert-plus@1.0.0 
+	│ │   │ │ │ ├── extsprintf@1.0.2 
+	│ │   │ │ │ ├── json-schema@0.2.3 
+	│ │   │ │ │ └── verror@1.3.6 
+	│ │   │ │ └─┬ sshpk@1.13.0 
+	│ │   │ │   ├── asn1@0.2.3 
+	│ │   │ │   ├── assert-plus@1.0.0 
+	│ │   │ │   ├── bcrypt-pbkdf@1.0.1 
+	│ │   │ │   ├─┬ dashdash@1.14.1 
+	│ │   │ │   │ └── assert-plus@1.0.0 
+	│ │   │ │   ├── ecc-jsbn@0.1.1 
+	│ │   │ │   ├─┬ getpass@0.1.7 
+	│ │   │ │   │ └── assert-plus@1.0.0 
+	│ │   │ │   ├── jodid25519@1.0.2 
+	│ │   │ │   ├── jsbn@0.1.1 
+	│ │   │ │   └── tweetnacl@0.14.5 
+	│ │   │ ├── is-typedarray@1.0.0 
+	│ │   │ ├── isstream@0.1.2 
+	│ │   │ ├── json-stringify-safe@5.0.1 
+	│ │   │ ├── oauth-sign@0.8.2 
+	│ │   │ ├── performance-now@0.2.0 
+	│ │   │ ├── qs@6.4.0 
+	│ │   │ ├── safe-buffer@5.0.1 
+	│ │   │ ├── stringstream@0.0.5 
+	│ │   │ ├── tunnel-agent@0.6.0 
+	│ │   │ └── uuid@3.0.1 
+	│ │   ├── sax@1.2.2 
+	│ │   ├── symbol-tree@3.2.2 
+	│ │   ├─┬ tough-cookie@2.3.2 
+	│ │   │ └── punycode@1.4.1 
+	│ │   ├── webidl-conversions@2.0.1 
+	│ │   ├─┬ whatwg-url-compat@0.6.5 
+	│ │   │ └── tr46@0.0.3 
+	│ │   └── xml-name-validator@2.0.1 
+	│ ├─┬ deep-assign@2.0.0 
+	│ │ └── is-obj@1.0.1 
+	│ ├─┬ hexo-cli@1.0.2 
+	│ │ └── minimist@1.2.0 
+	│ ├── hexo-front-matter@0.2.3 
+	│ ├─┬ hexo-fs@0.1.6 
+	│ │ ├─┬ chokidar@1.6.1 
+	│ │ │ ├─┬ anymatch@1.3.0 
+	│ │ │ │ ├── arrify@1.0.1 
+	│ │ │ │ └─┬ micromatch@2.3.11 
+	│ │ │ │   ├─┬ arr-diff@2.0.0 
+	│ │ │ │   │ └── arr-flatten@1.0.3 
+	│ │ │ │   ├── array-unique@0.2.1 
+	│ │ │ │   ├─┬ braces@1.8.5 
+	│ │ │ │   │ ├─┬ expand-range@1.8.2 
+	│ │ │ │   │ │ └─┬ fill-range@2.2.3 
+	│ │ │ │   │ │   ├── is-number@2.1.0 
+	│ │ │ │   │ │   ├─┬ isobject@2.1.0 
+	│ │ │ │   │ │   │ └── isarray@1.0.0 
+	│ │ │ │   │ │   ├── randomatic@1.1.6 
+	│ │ │ │   │ │   └── repeat-string@1.6.1 
+	│ │ │ │   │ ├── preserve@0.2.0 
+	│ │ │ │   │ └── repeat-element@1.1.2 
+	│ │ │ │   ├─┬ expand-brackets@0.1.5 
+	│ │ │ │   │ └── is-posix-bracket@0.1.1 
+	│ │ │ │   ├── extglob@0.3.2 
+	│ │ │ │   ├── filename-regex@2.0.1 
+	│ │ │ │   ├─┬ kind-of@3.2.0 
+	│ │ │ │   │ └── is-buffer@1.1.5 
+	│ │ │ │   ├─┬ normalize-path@2.1.1 
+	│ │ │ │   │ └── remove-trailing-separator@1.0.1 
+	│ │ │ │   ├─┬ object.omit@2.0.1 
+	│ │ │ │   │ ├─┬ for-own@0.1.5 
+	│ │ │ │   │ │ └── for-in@1.0.2 
+	│ │ │ │   │ └── is-extendable@0.1.1 
+	│ │ │ │   ├─┬ parse-glob@3.0.4 
+	│ │ │ │   │ ├── glob-base@0.3.0 
+	│ │ │ │   │ └── is-dotfile@1.0.2 
+	│ │ │ │   └─┬ regex-cache@0.4.3 
+	│ │ │ │     ├── is-equal-shallow@0.1.3 
+	│ │ │ │     └── is-primitive@2.0.0 
+	│ │ │ ├── async-each@1.0.1 
+	│ │ │ ├── glob-parent@2.0.0 
+	│ │ │ ├── inherits@2.0.3 
+	│ │ │ ├─┬ is-binary-path@1.0.1 
+	│ │ │ │ └── binary-extensions@1.8.0 
+	│ │ │ ├─┬ is-glob@2.0.1 
+	│ │ │ │ └── is-extglob@1.0.0 
+	│ │ │ ├── path-is-absolute@1.0.1 
+	│ │ │ └─┬ readdirp@2.1.0 
+	│ │ │   ├─┬ readable-stream@2.2.9 
+	│ │ │   │ ├── buffer-shims@1.0.0 
+	│ │ │   │ ├── isarray@1.0.0 
+	│ │ │   │ ├── process-nextick-args@1.0.7 
+	│ │ │   │ ├── string_decoder@1.0.0 
+	│ │ │   │ └── util-deprecate@1.0.2 
+	│ │ │   └── set-immediate-shim@1.0.1 
+	│ │ └── graceful-fs@4.1.11 
+	│ ├─┬ hexo-i18n@0.2.1 
+	│ │ └── sprintf-js@1.0.3 
+	│ ├─┬ hexo-log@0.1.2 
+	│ │ └─┬ bunyan@1.8.10 
+	│ │   ├─┬ dtrace-provider@0.8.1 
+	│ │   │ └── nan@2.6.2 
+	│ │   ├─┬ mv@2.1.1 
+	│ │   │ ├── ncp@2.0.0 
+	│ │   │ └─┬ rimraf@2.4.5 
+	│ │   │   └── glob@6.0.4 
+	│ │   └── safe-json-stringify@1.0.4 
+	│ ├─┬ hexo-util@0.6.0 
+	│ │ ├─┬ camel-case@3.0.0 
+	│ │ │ ├─┬ no-case@2.3.1 
+	│ │ │ │ └── lower-case@1.1.4 
+	│ │ │ └── upper-case@1.1.3 
+	│ │ ├─┬ cross-spawn@4.0.2 
+	│ │ │ ├─┬ lru-cache@4.0.2 
+	│ │ │ │ ├── pseudomap@1.0.2 
+	│ │ │ │ └── yallist@2.1.2 
+	│ │ │ └─┬ which@1.2.14 
+	│ │ │   └── isexe@2.0.0 
+	│ │ ├── highlight.js@9.11.0 
+	│ │ ├── html-entities@1.2.1 
+	│ │ └── striptags@2.2.1 
+	│ ├─┬ js-yaml@3.8.3 
+	│ │ ├── argparse@1.0.9 
+	│ │ └── esprima@3.1.3 
+	│ ├── lodash@4.17.4 
+	│ ├─┬ minimatch@3.0.3 
+	│ │ └─┬ brace-expansion@1.1.7 
+	│ │   ├── balanced-match@0.4.2 
+	│ │   └── concat-map@0.0.1 
+	│ ├── moment@2.13.0 
+	│ ├── moment-timezone@0.5.13 
+	│ ├─┬ nunjucks@2.5.2 
+	│ │ ├── asap@2.0.5 
+	│ │ └─┬ yargs@3.32.0 
+	│ │   ├── camelcase@2.1.1 
+	│ │   ├─┬ cliui@3.2.0 
+	│ │   │ └── wrap-ansi@2.1.0 
+	│ │   ├── decamelize@1.2.0 
+	│ │   ├─┬ os-locale@1.4.0 
+	│ │   │ └─┬ lcid@1.0.0 
+	│ │   │   └── invert-kv@1.0.0 
+	│ │   ├─┬ string-width@1.0.2 
+	│ │   │ ├── code-point-at@1.1.0 
+	│ │   │ └─┬ is-fullwidth-code-point@1.0.0 
+	│ │   │   └── number-is-nan@1.0.1 
+	│ │   ├── window-size@0.1.4 
+	│ │   └── y18n@3.2.1 
+	│ ├── pretty-hrtime@1.0.3 
+	│ ├─┬ strip-indent@1.0.1 
+	│ │ └── get-stdin@4.0.1 
+	│ ├─┬ swig@1.4.2 
+	│ │ ├─┬ optimist@0.6.1 
+	│ │ │ ├── minimist@0.0.10 
+	│ │ │ └── wordwrap@0.0.3 
+	│ │ └─┬ uglify-js@2.4.24 
+	│ │   ├── async@0.2.10 
+	│ │   ├── source-map@0.1.34 
+	│ │   ├── uglify-to-browserify@1.0.2 
+	│ │   └─┬ yargs@3.5.4 
+	│ │     ├── camelcase@1.2.1 
+	│ │     ├── window-size@0.1.0 
+	│ │     └── wordwrap@0.0.2 
+	│ ├─┬ swig-extras@0.0.1 
+	│ │ └─┬ markdown@0.5.0 
+	│ │   └── nopt@2.1.2 
+	│ ├── text-table@0.2.0 
+	│ ├─┬ tildify@1.2.0 
+	│ │ └── os-homedir@1.0.2 
+	│ ├── titlecase@1.1.2 
+	│ └─┬ warehouse@2.2.0 
+	│   ├─┬ cuid@1.3.8 
+	│   │ ├── browser-fingerprint@0.0.1 
+	│   │ ├── core-js@1.2.7 
+	│   │ └── node-fingerprint@0.0.2 
+	│   ├─┬ is-plain-object@2.0.1 
+	│   │ └── isobject@1.0.2 
+	│   └─┬ JSONStream@1.3.1 
+	│     ├── jsonparse@1.3.0 
+	│     └── through@2.3.8 
+	├─┬ hexo-generator-archive@0.1.4 
+	│ ├─┬ hexo-pagination@0.0.2 
+	│ │ └── utils-merge@1.0.0 
+	│ └── object-assign@2.1.1 
+	├─┬ hexo-generator-category@0.1.3 
+	│ └── object-assign@2.1.1 
+	├─┬ hexo-generator-index@0.2.1 
+	│ └── object-assign@4.1.1 
+	├── hexo-generator-tag@0.2.0 
+	├─┬ hexo-renderer-ejs@0.2.0 
+	│ └── ejs@1.0.0 
+	├─┬ hexo-renderer-marked@0.2.11 
+	│ └── marked@0.3.6 
+	├─┬ hexo-renderer-stylus@0.3.3 
+	│ ├── nib@1.1.2 
+	│ └─┬ stylus@0.54.5 
+	│   ├── css-parse@1.7.0 
+	│   ├─┬ debug@2.6.6 
+	│   │ └── ms@0.7.3 
+	│   ├─┬ glob@7.0.6 
+	│   │ ├── fs.realpath@1.0.0 
+	│   │ ├─┬ inflight@1.0.6 
+	│   │ │ └── wrappy@1.0.2 
+	│   │ └── once@1.4.0 
+	│   ├─┬ mkdirp@0.5.1 
+	│   │ └── minimist@0.0.8 
+	│   ├── sax@0.5.8 
+	│   └─┬ source-map@0.1.43 
+	│     └── amdefine@1.0.1 
+	└─┬ hexo-server@0.2.0 
+	  ├─┬ compression@1.6.2 
+	  │ ├─┬ accepts@1.3.3 
+	  │ │ ├── mime-types@2.1.15 
+	  │ │ └── negotiator@0.6.1 
+	  │ ├── bytes@2.3.0 
+	  │ ├─┬ compressible@2.0.10 
+	  │ │ └── mime-db@1.27.0 
+	  │ ├─┬ debug@2.2.0 
+	  │ │ └── ms@0.7.1 
+	  │ ├── on-headers@1.0.1 
+	  │ └── vary@1.1.1 
+	  ├─┬ connect@3.6.1 
+	  │ ├─┬ debug@2.6.3 
+	  │ │ └── ms@0.7.2 
+	  │ ├─┬ finalhandler@1.0.1 
+	  │ │ ├─┬ debug@2.6.3 
+	  │ │ │ └── ms@0.7.2 
+	  │ │ ├── statuses@1.3.1 
+	  │ │ └── unpipe@1.0.0 
+	  │ └── parseurl@1.3.1 
+	  ├── mime@1.3.4 
+	  ├─┬ morgan@1.8.1 
+	  │ ├── basic-auth@1.1.0 
+	  │ ├─┬ debug@2.6.1 
+	  │ │ └── ms@0.7.2 
+	  │ ├── depd@1.1.0 
+	  │ └─┬ on-finished@2.3.0 
+	  │   └── ee-first@1.1.1 
+	  ├─┬ opn@4.0.2 
+	  │ └─┬ pinkie-promise@2.0.1 
+	  │   └── pinkie@2.0.4 
+	  └─┬ serve-static@1.12.2 
+	    ├── encodeurl@1.0.1 
+	    ├── escape-html@1.0.3 
+	    └─┬ send@0.15.2 
+	      ├─┬ debug@2.6.4 
+	      │ └── ms@0.7.3 
+	      ├── destroy@1.0.4 
+	      ├── etag@1.8.0 
+	      ├── fresh@0.5.0 
+	      ├─┬ http-errors@1.6.1 
+	      │ └── setprototypeof@1.0.3 
+	      ├── ms@1.0.0 
+	      └── range-parser@1.2.0 
+
+	npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@^1.0.0 (node_modules/chokidar/node_modules/fsevents):
+	npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.1.1: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+	INFO  Start blogging with Hexo!
+	cg@cg-ThinkPad-Edge-E540 ~/Work/HexoWork/blog $ 
+
+这样,就完成了hexo本地环境的搭建,也在创建了本地博客，之后就可以在source目录下写文章了
+#### 发布博客
+文章写完后,在本地博客跟目录下运行命令
+`hexo serve`
+后,就可以在浏览器中访问本地博客,地址为
+`http://localhost:4000/`
+之后,运行命令
+`hexo generate`
+来生成html页面,存放到根目录的public文件夹内
+再运行
+`hexo deploy`
+命令,就可以将博客push到github中,需要注意的是,这里推送到github的只是public文件夹里的文件,其他的文件不会推送到github仓库中,还有,单纯的使用deploy命令来将内容推送到github仓库中时,自己并不能设置更性日志,她所设置的日志只是一些更性时间。而在之前使用的jekyll创建博客时,是单纯的使用git命令来推送文章,里面每推送一次,都需要设置描述性的日志
+即命令
+`git commit -m "xxxxx"`
+而这里的
+`hexo deploy`
+则不是这样,她属于包装了git命令,使得推送更新变得更为简单,这点倒让我觉得不太好
+
+
+
+
+
+[Hexo官方文档]:https://hexo.io/zh-cn/docs/index.html
+
+
+
+

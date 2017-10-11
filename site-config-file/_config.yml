@@ -54,7 +54,7 @@ tag_map:
 ## http://momentjs.com/docs/#/displaying/format/
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
-all_date_format: YYYY-MM-DD | HH:mm:ss
+all_date_format: YYYY-MM-DD HH:mm:ss
 
 # Pagination
 ## Set per_page to 0 to disable pagination
@@ -79,7 +79,10 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next-myself
+#theme: next-myself
+#theme: next-5.1.3
+theme: next-myself-5.1.3
+
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html

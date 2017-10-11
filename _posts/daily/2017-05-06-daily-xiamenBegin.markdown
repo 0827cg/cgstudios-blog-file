@@ -2,8 +2,9 @@
 layout: post
 title: "关于厦门-始"
 date: 2017-05-06 17:11:16
+updated: 2017-10-11 14:56:21
 categories: daily
-tags: [daily, 厦门]
+tags: daily
 ---
 
 我现在人就在厦门,一家公司里实习.

@@ -34,7 +34,7 @@ tags: hexo
 `npm install hexo-generator-searchdb --save`
 
 ### git连接github
-git上传文件到github会进行加密，且使用rsa加密，这需要让github知道公有密钥，使用命令
+git上传文件到github会进行加密，且使用rsa加密，这需要让github知道公有密钥，git bash下使用命令
 `ssh-keygen -t rsa -C "1732821152@qq.com"`
 之后会让你选择确认存放密钥的文件路径，为方便一路enter下去就可以，知道密钥存放路径就行了。将公有密钥id_rsa.pub文件里的内容放到github上
 

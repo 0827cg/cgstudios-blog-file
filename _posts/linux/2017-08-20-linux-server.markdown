@@ -45,11 +45,13 @@ tags: [linux, centos, redis, tomcat, nginx]
 `systemctl status firewalld` 
 确认下
 其输出如下
+
     [root@localhost bin]# systemctl status firewalld
     ● firewalld.service - firewalld - dynamic firewall daemon
        Loaded: loaded (/usr/lib/systemd/system/firewalld.service; disabled; vendor preset: enabled)
        Active: inactive (dead)
          Docs: man:firewalld(1)
+
 确实不在运行，所以就命令让它运行
 `systemctl start firewalld`
 即可启动，查看下状态可知inactive变为running，即在运行，然后命令查看所有已开放的端口，发现没有一个端口开放，这里需要开放8080端口

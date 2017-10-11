@@ -84,6 +84,7 @@ tags: [linux, centos, redis, tomcat, nginx]
 先查看,使用命令
 `rpm -qa | grep java`
 例如我的输出,显示如下信息
+
     java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
     javapackages-tools-3.4.1-11.el7.noarch
     java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
@@ -91,19 +92,26 @@ tags: [linux, centos, redis, tomcat, nginx]
     python-javapackages-3.4.1-11.el7.noarch
     java-1.7.0-openjdk-headless-1.7.0.111-2.6.7.8.el7.x86_64
     java-1.7.0-openjdk-1.7.0.111-2.6.7.8.el7.x86_64
+
 卸载命令
+
     rpm -e --nodeps java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
     rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
+
 还可以这样卸载
+
     java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
     java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
+
 最后我是删成了这样
+
     [xm6f@localhost jdk1.7.0_80]$ rpm -qa | grep java
     javapackages-tools-3.4.1-11.el7.noarch
     tzdata-java-2016g-2.el7.noarch
     python-javapackages-3.4.1-11.el7.noarch
     [xm6f@localhost jdk1.7.0_80]$ java
     -bash: /usr/bin/java: 没有那个文件或目录
+
 然后就是安装oraclejdk，配置环境变量，搭建java环境可以看这移步到这篇文章:[java环境搭建][]
 
 ### 安装Tomcat
@@ -311,7 +319,7 @@ firewall-cmd关闭已经开发的端口命令
 
 至此，就完成了tomcat的安装
 
-另外提下，如果使用tomcat页面中manager-app按钮，实现登陆管理，那么就需要修改/conf/tomcat-users.xml这个文件来设置登录的用户名和密码，这里修改成如下，这里的修改就是取消注释后再进行修改
+另外提下，如果使用tomcat页面中`manager-app`按钮，实现登陆管理，那么就需要修改`/conf/tomcat-users.xml`这个文件来设置登录的用户名和密码，这里修改成如下，这里的修改就是取消注释后再进行修改
 或者直接再文件底部，但需要在tomcat-user标签里面，这里我添加代码的代码如下
 
     <role rolename="tomcat" />
@@ -690,24 +698,36 @@ OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算
 
 在nginx.conf配置文件中添加如下代码，位置可以在gzip这一行后面，只要在location前面即可
 
-	upstream tomcat{
-		server 192.168.1.149:8080 weight=1;
-		server 192.168.1.149:8081 weight=1;
-		server 192.168.1.149:8082 weight=1;
+	upstream 119.29.216.43 {
+		server 119.29.216.43:8080 weight=1;
+		server 119.29.177.116:8080 weight=1;
 	}
 
-并将其中的`gzip  on`前面的注释，这个功能是将需要发送到浏览器的文件进行压缩，之后再修改location块中的内容修改成如下
 
-	location / {
-		proxy_buffering on;
+并将其中的`gzip  on`前面的注释，这个功能是将需要发送到浏览器的文件进行压缩，之后再修改server块中索要修改的内容修改成如下
 
-		proxy_connect_timeout 3;
-		proxy_send_timeout 3;
-		proxy_read_timeout 3;
-		proxy_pass  http://tomcat;
-		# root   html;
-		# index  index.html index.htm;
+    server {
+        listen       80;
+        server_name  119.29.216.43;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+			proxy_pass  http://119.29.216.43;
+			proxy_set_header Host $host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			client_max_body_size 10m;
+			proxy_connect_timeout 90;
+			proxy_sen
+		}
+	...
 	}
+
 
 这算是最基本的修改了，后面还得涉及到nginx性能的优化配置，这里先不扯。继续看上面的原始配置文件，nginx的server块中表明了nginx使用的地址server_name和端口号listen，其端口号是80端口，为使服务器能够外网访问就需要开放80端口，所以我们需要开放端口，其命令为
 `sudo firewall-cmd --zone=public --add-port=80/tcp --permanent`
@@ -715,7 +735,7 @@ OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算
 `sudo firewall-cmd --reload`
 两者都正常运行返回success即为开放成功，另外提下，列出所有已经开放的端口命令如下
 `sudo firewall-cmd --list-ports`
-目前，将nginx服务启动后，在我自己的笔记本上使用centos7服务器的ip及80端口通过浏览器即可访问到tomcat，但是负载均衡不能得到体现，所以我们可以修改三台tomcat安装目录下的/webapps/ROOT/index.jsp页面，来区分三台不同的tomcat，为了方便，我就修改了index.jsp页面的title，每个title的值就是相应tomcat所在的端口号，浏览器中输入http://192.168.1.149:80出现的页面就会使title=8080的tomcat欢迎页面，每次点击刷新，title都会更换，即tomcat都会更换，这就实现了nginx的负载均衡。
+目前，将nginx服务启动后，在我自己的笔记本上使用centos7服务器的ip及80端口通过浏览器即可访问到tomcat，但是负载均衡不能得到体现，所以我们可以修改三台tomcat安装目录下的`/webapps/ROOT/index.jsp`页面，来区分三台不同的tomcat，为了方便，我就修改了index.jsp页面的title，每个title的值就是相应tomcat所在的端口号，浏览器中输入`http://192.168.1.149:80`出现的页面就会使title=8080的tomcat欢迎页面，每次点击刷新，title都会更换，即tomcat都会更换，这就实现了nginx的负载均衡。
 至此nginx安装与配置已经完成
 查询nginx进程：
 `ps aux|grep nginx`
@@ -738,6 +758,11 @@ root下修改普通用户命令
 root下修改自己密码命令
 `passwd`
 添加用户`adduser 用户名`
+
+查看系统信息
+`uname -a`
+和
+`cat /etc/redhat-release`
 
 
 [java环境搭建][https://cgspace.date/2017/03/08/java/2017-3-08-java-EnvironmentVariable/]

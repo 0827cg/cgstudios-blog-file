@@ -2,8 +2,9 @@
 layout: post
 title: "Java笔试"
 date: 2017-3-16 16:12:40
+updated: 2017-10-11 14:58:12
 categories: java
-tags: [java, codeing, 笔试题]
+tags: [java, codeing]
 ---
 
 昨天邮件收到一份笔试题目,全英文.

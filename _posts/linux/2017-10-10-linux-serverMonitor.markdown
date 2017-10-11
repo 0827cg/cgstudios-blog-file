@@ -2,7 +2,7 @@
 layout: post
 title: "python实现服务器监控脚本"
 date: 2017-10-10 17:27:02
-updated: 2017-10-11 11:16:40
+updated: 2017-10-11 18:54:07
 categories: linux
 tags: [linux, python]
 ---
@@ -582,7 +582,8 @@ tags: [linux, python]
 邮件发送模块
 代码如下
 
-	import smtplib
+	import sys
+	from smtplib import SMTP_SSL
 	from email.mime.text import MIMEText
 	from email.mime.multipart import MIMEMultipart
 	from email.header import Header
@@ -718,24 +719,26 @@ tags: [linux, python]
 			#strContent: 邮件内容字符串类型
 			#message对象中的三个key('From','To','Subject')最好都要有，不然容易被识别为垃圾邮件
 			
-			mail_port = '465'
+			#mail_port = '465'
 			
 			message = MIMEText(strContent, "plain", "utf-8")
+			message['Subject'] = Header(strSubject, 'utf-8')
 			message['From'] = Header('monitor<%s>' % strSendAddr, 'utf-8')
 			message['To'] = Header('monitor.admin', 'utf-8')
-			message['Subject'] = Header(strSubject, 'utf-8')
 
 			try:
-				smtpObj = smtplib.SMTP_SSL()
+				smtpObj = SMTP_SSL(strSmtpServer)
 				#smtpObj.set_debuglevel(1)
-				smtpObj.connect(strSmtpServer, mail_port)
+				smtpObj.ehlo(strSmtpServer)
 				smtpObj.login(strSendAddr, strPasswd)
 				if(len(listToAddr) > 0):
 					smtpObj.sendmail(strSendAddr, listToAddr, message.as_string())
+					smtpObj.quit()
 				else:
 					self.fileUtilObj.writerContent("接收邮件地址为空", 'runErr')
 				#self.fileUtilObj.writerContent("邮件发送成功")
 			except:
+				print(sys.exc_info()[0])
 				self.fileUtilObj.writerContent("邮件发送失败", 'runErr')
 
 
@@ -751,12 +754,12 @@ tags: [linux, python]
 			#strContent: 邮件内容字符串类型
 			#message对象中的三个key('From','To','Subject')最好都要有，不然容易被识别为垃圾邮件
 			
-			mail_port = '465'
+			#mail_port = '465'
 
 			message = MIMEMultipart()
+			message['Subject'] = Header(strSubject, 'utf-8')
 			message['From'] = Header('monitor<%s>' % strSendAddr, 'utf-8')
 			message['To'] = Header('monitor.admin', 'utf-8')
-			message['Subject'] = Header(strSubject, 'utf-8')
 
 			message.attach(MIMEText(strContent, 'plain', 'utf-8'))
 
@@ -766,16 +769,18 @@ tags: [linux, python]
 			message.attach(annexFile)
 
 			try:
-				smtpObj = smtplib.SMTP_SSL()
+				smtpObj = SMTP_SSL(strSmtpServer)
 				#smtpObj.set_debuglevel(1)
-				smtpObj.connect(strSmtpServer, mail_port)
+				smtpObj.ehlo(strSmtpServer)
 				smtpObj.login(strSendAddr, strPasswd)
 				if(len(listToAddr) > 0):
 					smtpObj.sendmail(strSendAddr, addrItem, message.as_string())
+					smtpObj.quit()
 				else:
 					self.fileUtilObj.writerContent("接受邮件地址为空", 'runErr')
 				#self.fileUtilObj.writerContent("附件邮件发送成功")
 			except:
+				print(sys.exc_info()[0])
 				self.fileUtilObj.writerContent("附件邮件发送失败", 'runErr')
 
 
@@ -1225,6 +1230,30 @@ nginx检测模块
 			return intMark
 		 
 nginx和redis这两个检测模块代码比较类似
+
+### monitor.conf
+配置文件内容字段如下
+
+	[ProjectConfigure]
+	tomcatpath : tomcat安装目录的上一级目录，如果有多个tomcat,则为多个tomcat安装目录的上一级。需要这多个tomcat在同一目录下
+	nginxpath : nginx安装目录
+	redispath : redis安装目录
+
+	[UseConfigure]
+	servername : 服务器别称
+	username : 发送邮件用户名
+
+	[LogConfigure]
+	logpath : 存放日志文件的路径名,例如'logpath :logs'即将在本脚本根目录下创建logs文件夹来存放日志
+
+	[EmailConfigure]
+	smtp_server : smtp服务地址,例如'smtp.qq.com'
+	email_sendaddr : 发送邮件的邮箱账户
+	email_sendpasswd : 发送邮件的账户授权码
+
+	[ToEmail]
+	//在此处填写接受邮件的邮箱地址，可以为多个，例如如下
+	1732821152@qq.com
 
 目前脚本简单检测这三个项目的功能已经实现，后期只需要在进程模块包中进行添加模块，同是配置文件也需要更改
 后面再写，慢慢维护。项目代码已经提交至github仓库中，[这是里链接][]

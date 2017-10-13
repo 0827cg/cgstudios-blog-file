@@ -2,7 +2,7 @@
 layout: post
 title: "Linux上安装python3"
 date: 2017-10-11 14:44:23
-updated: 2017-10-11 14:54:52
+updated: 2017-10-11 19:05:56
 categories: python
 tags: [python, linux]
 ---
@@ -46,7 +46,7 @@ tags: [python, linux]
 一般是指超级用户指令。主要放置一些系统管理的必备程式例如: cfdisk、dhcpcd、dump、e2fsck、fdisk、halt、ifconfig、ifup、ifdown、init、insmod、lilo、lsmod、mke2fs、modprobe、quotacheck、reboot、rmmod、 runlevel、shutdown等。
 
 `/usr/bin`
-是用户在后期安装的一些软件的运行脚本。主要放置一些应用软体工具的必备执行档例如: c++、g++、gcc、chdrv、diff、dig、du、eject、elm、free、gnome*、 gzip、htpasswd、kfm、ktop、last、less、locale、m4、make、man、mcopy、ncftp、 newaliases、nslookup passwd、quota、smb*、wget等。
+是用户在后期安装的一些软件的运行脚本。主要放置一些应用软体工具的必备执行档例如: c++、g++、gcc、chdrv、diff、dig、du、eject、elm、free、gnome、gzip、htpasswd、kfm、ktop、last、less、locale、m4、make、man、mcopy、ncftp、 newaliases、nslookup passwd、quota、smb、wget等。
 
 `/usr/sbin`
 放置一些用户安装的系统管理的必备程式例如: dhcpd、httpd、imap、in.*d、inetd、lpd、named、netconfig、nmbd、samba、sendmail、squid、swap、tcpd、tcpdump等。

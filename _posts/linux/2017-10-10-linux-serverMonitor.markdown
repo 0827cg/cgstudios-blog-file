@@ -2,7 +2,7 @@
 layout: post
 title: "python实现服务器监控脚本"
 date: 2017-10-10 17:27:02
-updated: 2017-10-11 18:54:07
+updated: 2017-10-12 17:08:46
 categories: linux
 tags: [linux, python]
 ---
@@ -33,6 +33,9 @@ tags: [linux, python]
 
 选择操作模块，被`monitor.py`调用执行
 其代码如下
+
+	#!/usr/bin/python3
+	#coding=utf-8
 
 	from monitorbin.util.fileUtil import FileUtil
 	from monitorbin.module.tomcatCheck import TomcatOperate
@@ -88,6 +91,9 @@ tags: [linux, python]
 
 文件及部分数据处理类,在脚本运行中只能存在一个该对象
 代码如下
+
+	#!/usr/bin/python3
+	#coding=utf-8
 
 	import os
 	import xml.dom.minidom
@@ -509,6 +515,9 @@ tags: [linux, python]
 封装了调用了`subprocess.Popen`模块，实现python操作linux命令。通过python运行linux命令，截获两种输出`stdout`和`stderr`，在我看来这可分为有持续输出和无持续输出，区分这个时避免在持续输出时因存放量过大而发生阻塞，具体可参考[这篇文章][]及[官方文档][],当然，这也有[中文文档][]
 代码如下
 
+	#!/usr/bin/python3
+	#coding=utf-8
+
 	import subprocess
 
 	#author: cg错过
@@ -581,6 +590,9 @@ tags: [linux, python]
 #### emailUtil.py
 邮件发送模块
 代码如下
+
+	#!/usr/bin/python3
+	#coding=utf-8
 
 	import sys
 	from smtplib import SMTP_SSL
@@ -791,6 +803,9 @@ tags: [linux, python]
 时间模块
 代码如下
 
+	#!/usr/bin/python3
+	#coding=utf-8
+
 	import time
 
 	#author: cg错过
@@ -832,6 +847,9 @@ tags: [linux, python]
 
 tomcat检测模块
 代码如下
+
+	#!/usr/bin/python3
+	#coding=utf-8
 
 	import subprocess
 	import os
@@ -1036,6 +1054,9 @@ tomcat检测模块
 redis检测模块
 代码如下
 
+	#!/usr/bin/python3
+	#coding=utf-8
+
 	import os
 	from monitorbin.util.process import ProcessCL
 
@@ -1136,6 +1157,9 @@ redis检测模块
 nginx检测模块
 代码如下
 
+	#!/usr/bin/python3
+	#coding=utf-8
+	
 	from monitorbin.util.process import ProcessCL
 
 	#author: cg错过
@@ -1254,6 +1278,33 @@ nginx和redis这两个检测模块代码比较类似
 	[ToEmail]
 	//在此处填写接受邮件的邮箱地址，可以为多个，例如如下
 	1732821152@qq.com
+	
+### 定时执行实现
+
+现在的实现方式是使用linux上的crontab定时器来执行脚本
+命令
+`sudo vim /etc/crontab`
+在其中添加
+`*/5 * * * * root /usr/bin/python3 /usr/scripts/python/automatic_monitor/monitor.py >> /var/log/monitor.py.log 2>&1`
+其代码的意思就是告诉crontab，这个脚本是每隔5分钟使用root身份，用`/usr/bin/`此路径下的python3命令来运行monitor.py这个脚本，并将脚本中的输出和脚本运行出错的输出写入到`/var/log/monitor.py.log这个文件中`
+使用这个方法会出现两个问题
+1.编码问题
+输出如下
+
+	Traceback (most recent call last):
+	  File "/usr/scripts/python/automatic_monitor/test.py", line 7, in <module>
+		print("\u914d\u7f6e\u6587\u4ef6monitor.conf\u4e0d\u5b58\u5728,\u811a\u672c\u81ea\u52a8\u521b\u5efa\u5e76\u521d\u59cb\u5316")
+	UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-3: ordinal not in range(128)
+
+这个问题很奇怪，使用命令行运行脚本就不会出现这个问题。gg
+解决这个问题的方法是在`/etc/crontab`这个文件中添加字段
+`LANG=zh_CN.UTF-8`
+其原因就是crontab使用的环境变量配置文件并不是`/etc/profile`这个，而是使用自己的环境变量，即它自身的环境变量配置在就crontab这个文件中(文件内容开头部分)
+
+2.这个问题是本身的脚本问题，脚本设定的配置文件路径是固定的，即脚本目录的根目录。如果在这个情况下，使用crontab来做定时任务，那么脚本自动创建的配置文件路径将不是脚本存放目录的根目录，而将是`/root`这个目录，因为是以root身份运行，所以也就是说，使用crontab这个定时器来运行脚本，那么脚本的工作目录将会是`/root`这个路径，其创建的配置文件夹路径将为`/root/conf`.
+所以这需要在脚本上进行调整。
+
+后面将对代码进行更改，将定时功能直接添加到脚本本身中。
 
 目前脚本简单检测这三个项目的功能已经实现，后期只需要在进程模块包中进行添加模块，同是配置文件也需要更改
 后面再写，慢慢维护。项目代码已经提交至github仓库中，[这是里链接][]

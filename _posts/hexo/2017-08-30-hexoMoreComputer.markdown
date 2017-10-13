@@ -2,6 +2,7 @@
 layout: post
 title: "Hexo博客电脑迁移"
 date: 2017-08-30 16:25:39
+updated: 2017-10-12 17:27:26
 categories: hexo
 tags: hexo
 ---
@@ -47,5 +48,9 @@ git上传文件到github会进行加密，且使用rsa加密，这需要让githu
 2.在themes文件夹下运行
 `git clone https://github.com/cgstudios/myselfBlog-theme-next-myself.git`
 再将clone得到的myselfBlog-theme-next-myself重命名为next-myself
+
+3.本地站点目录下运行命令
+`npm install aplayer --save`
+`npm install hexo-tag-aplayer`
 
 之后运行命令`hexo deploy`就可以查看是否连接到github仓库了

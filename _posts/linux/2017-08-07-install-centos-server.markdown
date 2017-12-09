@@ -84,6 +84,7 @@ tags: [linux, centos, redis, tomcat, nginx]
 先查看,使用命令
 `rpm -qa | grep java`
 例如我的输出,显示如下信息
+
     java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
     javapackages-tools-3.4.1-11.el7.noarch
     java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
@@ -91,19 +92,26 @@ tags: [linux, centos, redis, tomcat, nginx]
     python-javapackages-3.4.1-11.el7.noarch
     java-1.7.0-openjdk-headless-1.7.0.111-2.6.7.8.el7.x86_64
     java-1.7.0-openjdk-1.7.0.111-2.6.7.8.el7.x86_64
+
 卸载命令
+
     rpm -e --nodeps java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
     rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
+
 还可以这样卸载
+
     java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64
     java-1.8.0-openjdk-headless-1.8.0.102-4.b14.el7.x86_64
+
 最后我是删成了这样
+
     [xm6f@localhost jdk1.7.0_80]$ rpm -qa | grep java
     javapackages-tools-3.4.1-11.el7.noarch
     tzdata-java-2016g-2.el7.noarch
     python-javapackages-3.4.1-11.el7.noarch
     [xm6f@localhost jdk1.7.0_80]$ java
     -bash: /usr/bin/java: 没有那个文件或目录
+
 然后就是安装oraclejdk，配置环境变量，搭建java环境可以看这移步到这篇文章:[java环境搭建][]
 
 ### 安装Tomcat
@@ -124,7 +132,7 @@ tags: [linux, centos, redis, tomcat, nginx]
 即将bin目录文件的拥有者更改成xm6f普通用户，这样就可以进入bin目录了，进入bin目录后，就可以运行命令来启动tomcat了
 命令
 `./catalina.sh start`或者`./startup.sh`
-因为使用的是8080端口，大于1024端口，而且文件所有者已经更改成了xm6f普通用户，所以不需要使用root来进行启动，启动之后再centos服务器电脑上就使用http://localhost:8080这个链接来访问tomcat服务器主页，那我在自己电脑上来进行访问，其链接为:http://192.168.1.149:8080来进行访问。不过需要注意的是，这样访问需要centos服务器已经对外开放了8080端口，默认对外开发的端口为20，并没有8080，所以需要手动开启，不然照样访问不了
+因为使用的是8080端口，大于1024端口，而且文件所有者已经更改成了xm6f普通用户，所以不需要使用root来进行启动，启动之后再centos服务器电脑上就使用`http://localhost:8080`这个链接来访问tomcat服务器主页，那我在自己电脑上来进行访问，其链接为`http://192.168.1.149:8080`来进行访问。不过需要注意的是，这样访问需要centos服务器已经对外开放了8080端口，默认对外开发的端口为20，并没有8080，所以需要手动开启，不然照样访问不了
 其开启对外开发8080端口命令如下
 `sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent`
 运行上面这条命令后，如果运行正常返回success那么再运行下面这条命令
@@ -132,6 +140,8 @@ tags: [linux, centos, redis, tomcat, nginx]
 若同样正常返回success那么就成功的对外开发了8080端口，另外提一点，因为现在操作的是centos7系统，这里可以有两种方式来开放端口，一种就是上面的使用firewall-cmd命令，另一种就是操作iptables,iptables我不大会操作，不过后期再补上。如果没使用firewall-cmd来开放端口的的话，估计就是iptables里面开放了。我之前就是，同事使用iptables开放了端口，而我又不知道，使用firewall-cmd命令
 `sudo firewall-cmd --list-ports`
 查看了所以的已经开放了的端口号，发现我要开放的端口在这个输出中并不存在，那就肯定是iptables上进行开放了。
+firewall-cmd关闭已经开发的端口命令
+`sudo firewall-cmd --zone=public --remove-port=8080/tcp --permanent`
 
 #### 配置三台tomcat
 
@@ -309,7 +319,7 @@ tags: [linux, centos, redis, tomcat, nginx]
 
 至此，就完成了tomcat的安装
 
-另外提下，如果使用tomcat页面中manager-app按钮，实现登陆管理，那么就需要修改/conf/tomcat-users.xml这个文件来设置登录的用户名和密码，这里修改成如下，这里的修改就是取消注释后再进行修改
+另外提下，如果使用tomcat页面中`manager-app`按钮，实现登陆管理，那么就需要修改`/conf/tomcat-users.xml`这个文件来设置登录的用户名和密码，这里修改成如下，这里的修改就是取消注释后再进行修改
 或者直接再文件底部，但需要在tomcat-user标签里面，这里我添加代码的代码如下
 
     <role rolename="tomcat" />
@@ -336,7 +346,9 @@ centos7服务器电脑还需要安装redis
 
     zmalloc.h:50:31: 致命错误：jemalloc/jemalloc.h：没有那个文件或目录
 
-网上查了之后才知道命令中需要添加一个参数变量,运行命令sudo make MALLOC=libc,就不会出现这个问题，然后测试redis是否安装成功，运行命令
+网上查了之后才知道命令中需要添加一个参数变量,运行命令
+`sudo make MALLOC=libc`
+就不会出现这个问题，然后测试redis是否安装成功，运行命令
 `make test`
 时，出现个问题
 
@@ -366,7 +378,7 @@ centos7服务器电脑还需要安装redis
 
 #### 配置redis开机启动
 
-所以为了方便启动和管理，我在/usr/local/下新建了个redis文件夹，并将redis-server，redis-cli，redis-sentinel，redis-benchmark，redis-check-aof，redis-check-dump及redis.conf复制到该redis文件夹下，配置开机启动的方式就是在/etc/rc.d/init.d目录下创建一个启动脚本，命令如下
+所以为了方便启动和管理，我在/usr/local/下新建了个redis文件夹，并将安装目录下是srz文件夹中的redis-server，redis-cli，redis-sentinel，redis-benchmark，redis-check-aof，redis-check-dump及redis.conf复制到该redis文件夹下，配置开机启动的方式就是在/etc/rc.d/init.d目录下创建一个启动脚本，命令如下
 `sudo vim redis`
 脚本是从网上找的，只是进行了修改，其内容如下
 
@@ -686,24 +698,36 @@ OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算
 
 在nginx.conf配置文件中添加如下代码，位置可以在gzip这一行后面，只要在location前面即可
 
-	upstream tomcat{
-		server 192.168.1.149:8080 weight=1;
-		server 192.168.1.149:8081 weight=1;
-		server 192.168.1.149:8082 weight=1;
+	upstream 119.29.216.43 {
+		server 119.29.216.43:8080 weight=1;
+		server 119.29.177.116:8080 weight=1;
 	}
 
-并将其中的`gzip  on`前面的注释，这个功能是将需要发送到浏览器的文件进行压缩，之后再修改location块中的内容修改成如下
 
-	location / {
-		proxy_buffering on;
+并将其中的`gzip  on`前面的注释，这个功能是将需要发送到浏览器的文件进行压缩，之后再修改server块中索要修改的内容修改成如下
 
-		proxy_connect_timeout 3;
-		proxy_send_timeout 3;
-		proxy_read_timeout 3;
-		proxy_pass  http://tomcat;
-		# root   html;
-		# index  index.html index.htm;
+    server {
+        listen       80;
+        server_name  119.29.216.43;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+			proxy_pass  http://119.29.216.43;
+			proxy_set_header Host $host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			client_max_body_size 10m;
+			proxy_connect_timeout 90;
+			proxy_sen
+		}
+	...
 	}
+
 
 这算是最基本的修改了，后面还得涉及到nginx性能的优化配置，这里先不扯。继续看上面的原始配置文件，nginx的server块中表明了nginx使用的地址server_name和端口号listen，其端口号是80端口，为使服务器能够外网访问就需要开放80端口，所以我们需要开放端口，其命令为
 `sudo firewall-cmd --zone=public --add-port=80/tcp --permanent`
@@ -711,7 +735,7 @@ OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算
 `sudo firewall-cmd --reload`
 两者都正常运行返回success即为开放成功，另外提下，列出所有已经开放的端口命令如下
 `sudo firewall-cmd --list-ports`
-目前，将nginx服务启动后，在我自己的笔记本上使用centos7服务器的ip及80端口通过浏览器即可访问到tomcat，但是负载均衡不能得到体现，所以我们可以修改三台tomcat安装目录下的/webapps/ROOT/index.jsp页面，来区分三台不同的tomcat，为了方便，我就修改了index.jsp页面的title，每个title的值就是相应tomcat所在的端口号，浏览器中输入http://192.168.1.149:80出现的页面就会使title=8080的tomcat欢迎页面，每次点击刷新，title都会更换，即tomcat都会更换，这就实现了nginx的负载均衡。
+目前，将nginx服务启动后，在我自己的笔记本上使用centos7服务器的ip及80端口通过浏览器即可访问到tomcat，但是负载均衡不能得到体现，所以我们可以修改三台tomcat安装目录下的`/webapps/ROOT/index.jsp`页面，来区分三台不同的tomcat，为了方便，我就修改了index.jsp页面的title，每个title的值就是相应tomcat所在的端口号，浏览器中输入`http://192.168.1.149:80`出现的页面就会使title=8080的tomcat欢迎页面，每次点击刷新，title都会更换，即tomcat都会更换，这就实现了nginx的负载均衡。
 至此nginx安装与配置已经完成
 查询nginx进程：
 `ps aux|grep nginx`
@@ -733,7 +757,12 @@ root下修改普通用户命令
 `passwd 用户名`
 root下修改自己密码命令
 `passwd`
+添加用户`adduser 用户名`
 
+查看系统信息
+`uname -a`
+和
+`cat /etc/redhat-release`
 
 
 [java环境搭建][https://cgspace.date/2017/03/08/java/2017-3-08-java-EnvironmentVariable/]

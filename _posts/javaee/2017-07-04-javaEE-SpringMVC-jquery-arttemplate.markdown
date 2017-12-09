@@ -3,7 +3,7 @@ layout: post
 title: "Spring MVC注解控制器同步跳转和ajax的异步请求的协作"
 date: 2017-07-04 15:35:55
 categories: javaEE
-tags: [javaEE, codeing，JQuery, AJAX]
+tags: [javaEE, codeing, JQuery, AJAX]
 ---
 
 就着现在接触的项目优茶联项目中，谈谈在系统的个人中心里的我的收藏中，对收藏的商品进行取消收藏的流程
